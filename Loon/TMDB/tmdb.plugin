@@ -12,5 +12,11 @@ arg2 = switch,true,tag=成人内容
 hostname = api.themoviedb.org
 
 [Script]
-# 匹配TMDb v3下的所有接口，但排除/movie/{id}/images与/tv/{id}/images
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/TMDB/tmdb.js, tag=TMDb增强, enable=true, argument="forceChinese={arg1}&enableAdult={arg2}"
+tmdb_unlock = type=http-request,pattern=^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).*,script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/TMDB/tmdb.js,enabled=true,icon=https://raw.githubusercontent.com/<用户名>/tmdb-loon-plugin/main/icon.png
+
+[Script-Config]
+# 开关说明：
+# UNLOCK_ADULT=1 开启成人内容解锁，0关闭
+# SET_LANGUAGE_CHINESE=1 开启中文显示，0关闭
+UNLOCK_ADULT=1
+SET_LANGUAGE_CHINESE=1
