@@ -1,7 +1,7 @@
 #!name=TMDb增强
 #!desc=在TMDb API请求中自动注入language=zh-CN与include_adult=true（可分别在插件界面关闭）。会排除movie/{id}/images与tv/{id}/images图片元数据接口，不影响图片CDN请求。
 #!author=Evan
-#!icon=https://raw.githubusercontent.com/arthurbz/tmdb-app/refs/heads/master/src/assets/tmdb-primary-logo.png
+#!icon=https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
 #!date=2025-11-07
 
 [Argument]
@@ -13,4 +13,4 @@ hostname = api.themoviedb.org
 
 [Script]
 # 匹配TMDb v3下的所有接口，但排除/movie/{id}/images与/tv/{id}/images
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/TMDB/tmdb.js, tag=TMDb增强, enable=true
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/TMDB/tmdb.js, tag=TMDb增强, enable=true, argument="forceChinese={arg1}&enableAdult={arg2}"
