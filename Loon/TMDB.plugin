@@ -1,95 +1,37 @@
-#!name=TMDb增强
-#!desc=在TMDb API请求中自动注入language=zh-CN与include_adult=true（可分别在插件界面关闭）。会排除movie/{id}/images与tv/{id}/images图片元数据接口，不影响图片CDN请求。
-#!author=Evan
-#!icon=ttps://cdn.apifox.com/app/project-icon/custom/20240429/110f7eb8-fd1b-481b-9f3c-495a67130f6c.png
-#!date=2025-11-07
+#!name=TMDB+T66Y+Forward 解锁合集
+#!desc=解锁TMDB成人内容、T66Y移动版跳转、Forward成人内容开关合集
+#!author=Emrys
+#!version=1.0
+#!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Video.png
 
-[Argument]
-arg1 = switch,true,tag=强制中文
-arg2 = switch,true,tag=成人内容
+[Rule]
+# 这里可以放一些通用规则（可选）
 
-[MITM]
-hostname = api.themoviedb.org
+[Rewrite]
+# TMDB成人内容开关
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true tag=TMDB_Adult
 
-[Script]
-# 匹配TMDb v3下的所有接口，但排除/movie/{id}/images与/tv/{id}/images
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-content=(
-/**
- * TMDb增强（Loon插件内联脚本）
- * 功能：自动为TMDB API请求添加中文参数和成人内容参数
- * 排除图片元数据接口，避免影响图片CDN性能
- */
-(() => {
-  try {
-    // 安全检查
-    if (typeof $request === 'undefined' || !$request.url) {
-      console.log('[TMDb增强] 错误: 无效的请求对象');
-      $done({});
-      return;
-    }
-    
-    const urlStr = $request.url;
-    console.log('[TMDb增强] 拦截到请求: ' + urlStr);
-    
-    // 解析插件参数
-    let forceChinese = true;
-    let enableAdult = true;
-    
-    if (typeof $argument !== 'undefined') {
-      try {
-        // 支持多种参数格式
-        if (typeof $argument === 'string') {
-          // 处理字符串参数格式: "forceChinese=true&enableAdult=true"
-          const params = $argument.split('&');
-          params.forEach(param => {
-            const [key, value] = param.split('=');
-            if (key === 'forceChinese') forceChinese = value !== 'false';
-            if (key === 'enableAdult') enableAdult = value !== 'false';
-          });
-        } else if (typeof $argument === 'object') {
-          // 处理对象参数格式
-          if (typeof $argument.forceChinese !== 'undefined') {
-            forceChinese = String($argument.forceChinese) === 'true';
-          }
-          if (typeof $argument.enableAdult !== 'undefined') {
-            enableAdult = String($argument.enableAdult) === 'true';
-          }
-        }
-      } catch (e) {
-        console.log('[TMDb增强] 参数解析错误, 使用默认值: ' + e);
-      }
-    }
-    
-    console.log(`[TMDb增强] 配置参数: 中文=${forceChinese}, 成人内容=${enableAdult}`);
-    
-    const url = new URL(urlStr);
-    let modified = false;
-    
-    // 只在参数不存在时才添加，避免覆盖原有设置
-    if (forceChinese && !url.searchParams.has('language')) {
-      url.searchParams.set('language', 'zh-CN');
-      modified = true;
-      console.log('[TMDb增强] 已添加中文参数: language=zh-CN');
-    }
-    
-    if (enableAdult && !url.searchParams.has('include_adult')) {
-      url.searchParams.set('include_adult', 'true');
-      modified = true;
-      console.log('[TMDb增强] 已启用成人内容: include_adult=true');
-    }
-    
-    if (modified) {
-      const newUrl = url.toString();
-      console.log(`[TMDb增强] 请求修改完成:\n原URL: ${urlStr}\n新URL: ${newUrl}`);
-      $done({ url: newUrl });
-    } else {
-      console.log('[TMDb增强] 无需修改，直接放行');
-      $done({});
-    }
-    
-  } catch (error) {
-    console.log('[TMDb增强] 执行错误: ' + error.message);
-    $done({});
-  }
-})()
-, tag=TMDb增强, enable=true, argument="forceChinese={arg1}&enableAdult={arg2}"
+# T66Y移动版跳转
+^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3 tag=T66Y_Mobile
+
+# Forward成人内容开关
+^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2 tag=Forward_Adult
+
+[Plugin]
+# TMDB 成人内容解锁
+plugin_enabled=1
+plugin_name=TMDB 成人内容解锁
+rewrite=TMDB_Adult
+enabled=true
+
+# T66Y 移动版跳转
+plugin_enabled=1
+plugin_name=T66Y 移动版跳转
+rewrite=T66Y_Mobile
+enabled=true
+
+# Forward 成人内容解锁
+plugin_enabled=1
+plugin_name=Forward 成人内容解锁
+rewrite=Forward_Adult
+enabled=true
