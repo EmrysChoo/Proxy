@@ -1,38 +1,35 @@
 [General]
 name = TMDB API优化插件
-author = YourName
+author = Evan
 version = 1.0.0
-description = 自动为TMDB API请求添加中文语言和成人内容参数，排除图片相关请求
+description = 自动为TMDB API请求添加中文语言和成人内容参数，可分别控制开关
 icon = https://www.themoviedb.org/assets/2/favicon-32x32-543a21832c8931d3494a68881bef6e5b.png
 update = 2024-01-01
 
 [Script]
-# TMDB API参数优化脚本
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=script-text, requires-body=true, timeout=10, script-text=
+# TMDB语言优化脚本
+enabled = true
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(search\/movie|discover\/movie|movie\/\d+|search\/tv|discover\/tv|tv\/\d+|search\/person|search\/collection)(\?.*)?$ script-path=script-text, requires-body=true, timeout=10, script-text=
 (() => {
     'use strict';
-    
     const url = $request.url;
     const newUrl = new URL(url);
     
-    // 排除图片相关请求
-    const isImageMetaRequest = 
-        /\/3\/(tv|movie)\/\d+\/(image|images)/.test(url) ||
-        /\/3\/tv\/\d+\/season\/\d+\/episode\/\d+\/images/.test(url) ||
-        /\/3\/person\/\d+\/images/.test(url);
-    
-    const isImageResource = 
-        /\.(jpg|jpeg|png|webp|gif|svg|bmp|tiff)/i.test(url) ||
-        url.includes('image.tmdb.org/t/p/') ||
-        /images\.tmdb\.org/.test(url);
-    
-    if (!isImageMetaRequest && !isImageResource) {
+    // 检查是否已启用语言优化
+    if (!$persistentStore.read('TMDB_LANGUAGE_ENABLED') || $persistentStore.read('TMDB_LANGUAGE_ENABLED') === 'true') {
         if (!newUrl.searchParams.has('language')) {
             newUrl.searchParams.set('language', 'zh-CN');
         }
-        if (!newUrl.searchParams.has('include_adult')) {
-            newUrl.searchParams.set('include_adult', 'true');
+    }
+    
+    // 检查是否已启用成人内容
+    if (!$persistentStore.read('TMDB_ADULT_ENABLED') || $persistentStore.read('TMDB_ADULT_ENABLED') === 'true') {
+        if (!newUrl.searchParams.set('include_adult', 'true');
         }
+    }
+    
+    // 检查是否已启用地区优化
+    if (!$persistentStore.read('TMDB_REGION_ENABLED') || $persistentStore.read('TMDB_REGION_ENABLED') === 'true') {
         if (!newUrl.searchParams.has('region')) {
             newUrl.searchParams.set('region', 'CN');
         }
@@ -41,8 +38,6 @@ http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|mov
     $done({ url: newUrl.toString() });
 })();
 
-[Mitm]
-hostname = api.themoviedb.org
-
-[Panel]
-static = TMDB API优化, server, update=3600
+# TMDB详情页优化脚本
+enabled = true
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?$ script-path=script-text, requires-body=true, timeout=10, script
