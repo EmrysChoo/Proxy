@@ -46,6 +46,7 @@
         
         console.log(`[TMDb增强] 配置参数: 中文=${forceChinese}, 成人内容=${enableAdult}`);
         
+        // 修复：将 '网站' 改为 'URL'
         const url = new 网站(urlStr);
         let modified = false;
         
