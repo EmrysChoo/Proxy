@@ -1,40 +1,36 @@
 # ============================================
-#  📦 Loon Plugin: TMDb 增强
-#  功能: 自动为 TMDB API 请求添加语言和成人内容参数
-#       支持单独开关：强制中文 / 成人内容
-#       自动跳过所有图片接口
-#  作者: Evan
-#  版本: 1.3.0
-#  更新时间: 2025-11-07
-#  图标: https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
-#  ============================================
+# Loon Plugin: TMDb增强
+# 功能: 为 TMDb API 自动添加 language=zh-CN 与 include_adult=true（可开关）
+# 作者: Evan
+# 版本: 1.0.0
+# 图标: TMDb 官方图标
+# 更新时间: 2025-11-07
+# ============================================
 
 [General]
-name = TMDb 增强
-desc = 为 TMDB API 添加 language=zh-CN 与 include_adult=true；支持插件内单独开关功能。
+name = TMDb增强
+desc = 为 TMDb API 请求自动添加 language=zh-CN 与 include_adult=true；插件内可单独开关强制中文与成人内容。
 author = Evan
-version = 1.3.0
+version = 1.0.0
 icon = https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
 
 [Arguments]
-# 🈶 语言参数强制中文
 forceChinese = true
-# 🔞 显示成人内容
 enableAdult = true
 
+[MITM]
+hostname = api.themoviedb.org
+
 [Script]
-tmdb-enhancer = script-request-header, ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).*, requires-body=false, timeout=10, tag=tmdb-enhancer, argument=forceChinese, argument=enableAdult, script-content=
-/**
- * TMDb 参数增强脚本 (Loon Plugin)
- * 说明:
- *  - 根据插件开关设置添加语言和成人参数
- *  - 已排除所有图片接口
- */
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-content=
 (() => {
   try {
-    const url = new URL($request.url);
-    const forceChinese = $argument.forceChinese === 'true';
-    const enableAdult = $argument.enableAdult === 'true';
+    const urlStr = $request.url || '';
+    if (!urlStr) { $done({}); return; }
+    const url = new URL(urlStr);
+
+    const forceChinese = (typeof $argument !== 'undefined' && typeof $argument.forceChinese !== 'undefined') ? ($argument.forceChinese === 'true') : true;
+    const enableAdult = (typeof $argument !== 'undefined' && typeof $argument.enableAdult !== 'undefined') ? ($argument.enableAdult === 'true') : true;
 
     if (forceChinese) {
       url.searchParams.set('language', 'zh-CN');
@@ -43,15 +39,11 @@ tmdb-enhancer = script-request-header, ^https?:\/\/api\.themoviedb\.org\/3\/(?!t
       url.searchParams.set('include_adult', 'true');
     }
 
-    console.log(
-      `[TMDb 增强] 请求修改 → ${url.toString()} | 中文=${forceChinese} 成人=${enableAdult}`
-    );
+    console.log(`[TMDb增强] 请求修改 → ${url.toString()} | 中文=${forceChinese} 成人=${enableAdult}`);
     $done({ url: url.toString() });
   } catch (err) {
-    console.log('[TMDb 增强] 错误: ' + err);
+    console.log('[TMDb增强] 错误: ' + err);
     $done({});
   }
-})();
-
-[MITM]
-hostname = api.themoviedb.org
+})()
+, tag=TMDb增强, enable=true
