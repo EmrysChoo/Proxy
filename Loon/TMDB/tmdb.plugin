@@ -13,4 +13,4 @@ hostname = api.themoviedb.org
 
 [Script]
 # 匹配TMDb v3下的所有接口，但排除/movie/{id}/images与/tv/{id}/images
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://raw.githubusercontent.com/EmrysChoo/Quantumult-X/main/scripts/tmdb.js, tag=TMDb增强, enable=true
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/TMDB/tmdb.js, tag=TMDb增强, enable=true
