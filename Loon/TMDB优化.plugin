@@ -1,61 +1,17 @@
 [General]
-name = TMDB API优化（复写版）
+name = TMDB成人内容解锁
 author = YourName
 version = 1.0.0
-description = 使用纯复写规则优化TMDB API，支持独立开关控制
+description = 解锁TMDB成人内容显示，可开关控制
 icon = https://www.themoviedb.org/assets/2/favicon-32x32-543a21832c8931d3494a68881bef6e5b.png
-update = 2024-01-01
 
 [Panel]
-# 控制面板 - 使用Loon内置的开关机制
-TMDB语言优化 = switch, tmdb_lang_enabled, true
-TMDB成人内容 = switch, tmdb_adult_enabled, true  
-TMDB地区优化 = switch, tmdb_region_enabled, true
-状态信息 = notification, TMDB优化已启用
+成人内容解锁 = switch, tmdb_adult_unlock, true
 
 [URL Rewrite]
-# 语言参数优化 - 搜索和发现
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Lang-Enabled: ${tmdb_lang_enabled}
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?&language= 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)$ 302 https://api.themoviedb.org/3/$1/$2?language=zh-CN
-
-# 成人内容参数优化
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Adult-Enabled: ${tmdb_adult_enabled}
-^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?&include_adult= 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
+# 成人内容解锁规则（受开关控制）
 ^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
 ^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)$ 302 https://api.themoviedb.org/3/$1/$2?include_adult=true
 
-# 地区参数优化
-^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Region-Enabled: ${tmdb_region_enabled}
-^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)?&region= 302 https://api.themoviedb.org/3/$1/$2?$3&region=CN
-^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&region=CN
-^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)$ 302 https://api.themoviedb.org/3/$1/$2?region=CN
-
-# 详情页语言优化
-^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?&language= 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
-^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
-^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+$ 302 https://api.themoviedb.org/3/$1/$2?language=zh-CN
-
-# 排除图片请求规则
-^https?:\/\/api\.themoviedb\.org\/3\/.*\/(images?|poster|backdrop|logo) reject-200
-
 [Mitm]
 hostname = api.themoviedb.org
-
-[Plugin]
-# 插件信息显示
-type = interface
-title = TMDB API优化设置
-content = [
-  {
-    "type": "label",
-    "title": "当前状态",
-    "subtitle": "语言: ${tmdb_lang_enabled==true ? '开启' : '关闭'}, 成人内容: ${tmdb_adult_enabled==true ? '开启' : '关闭'}, 地区: ${tmdb_region_enabled==true ? '开启' : '关闭'}"
-  },
-  {
-    "type": "label", 
-    "title": "功能说明",
-    "subtitle": "为TMDB API自动添加优化参数"
-  }
-]
