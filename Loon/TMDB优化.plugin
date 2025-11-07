@@ -1,100 +1,61 @@
 [General]
-name = TMDB API 优化 (稳定版)
+name = TMDB API优化（复写版）
 author = YourName
-version = 1.2.0
-description = 优化TMDB API请求，支持独立开关控制
+version = 1.0.0
+description = 使用纯复写规则优化TMDB API，支持独立开关控制
 icon = https://www.themoviedb.org/assets/2/favicon-32x32-543a21832c8931d3494a68881bef6e5b.png
 update = 2024-01-01
 
-[MITM]
+[Panel]
+# 控制面板 - 使用Loon内置的开关机制
+TMDB语言优化 = switch, tmdb_lang_enabled, true
+TMDB成人内容 = switch, tmdb_adult_enabled, true  
+TMDB地区优化 = switch, tmdb_region_enabled, true
+状态信息 = notification, TMDB优化已启用
+
+[URL Rewrite]
+# 语言参数优化 - 搜索和发现
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Lang-Enabled: ${tmdb_lang_enabled}
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?&language= 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)$ 302 https://api.themoviedb.org/3/$1/$2?language=zh-CN
+
+# 成人内容参数优化
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Adult-Enabled: ${tmdb_adult_enabled}
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?&include_adult= 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
+^https?:\/\/api\.themoviedb\.org\/3\/(search|discover)\/(movie|tv|person)$ 302 https://api.themoviedb.org/3/$1/$2?include_adult=true
+
+# 地区参数优化
+^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)? url request-header ^(.*)$ $1\r\nX-TMDB-Region-Enabled: ${tmdb_region_enabled}
+^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)?&region= 302 https://api.themoviedb.org/3/$1/$2?$3&region=CN
+^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&region=CN
+^https?:\/\/api\.themoviedb\.org\/3\/(discover)\/(movie|tv)$ 302 https://api.themoviedb.org/3/$1/$2?region=CN
+
+# 详情页语言优化
+^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?&language= 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
+^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3&language=zh-CN
+^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+$ 302 https://api.themoviedb.org/3/$1/$2?language=zh-CN
+
+# 排除图片请求规则
+^https?:\/\/api\.themoviedb\.org\/3\/.*\/(images?|poster|backdrop|logo) reject-200
+
+[Mitm]
 hostname = api.themoviedb.org
 
-[Script]
-# 主处理脚本
-enable = true
-# 使用 script-text 直接嵌入，避免外部文件依赖
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!.*\/(image|images|poster|backdrop|logo)) script-path=script-text, requires-body=true, timeout=30, script-text=
-(async function() {
-    let url = $request.url;
-    // 使用持久化存储读取开关状态，默认值为"true"（开启）
-    const enableLang = typeof $persistentStore.read('tmdb_enable_lang') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_lang');
-    const enableAdult = typeof $persistentStore.read('tmdb_enable_adult') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_adult');
-    const enableRegion = typeof $persistentStore.read('tmdb_enable_region') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_region');
-
-    if (enableLang === 'true' || enableAdult === 'true' || enableRegion === 'true') {
-        const urlObj = new URL(url);
-        if (enableLang === 'true' && !urlObj.searchParams.has('language')) {
-            urlObj.searchParams.set('language', 'zh-CN');
-        }
-        if (enableAdult === 'true' && !urlObj.searchParams.has('include_adult')) {
-            urlObj.searchParams.set('include_adult', 'true');
-        }
-        if (enableRegion === 'true' && !urlObj.searchParams.set('region', 'CN');
-        }
-        url = urlObj.toString();
-    }
-    $done({ url });
-})();
-
-# 面板脚本 - 用于生成UI和控制逻辑
-cron "0 0 * * *" script-path=script-text, script-text=
-// 每日初始化一次，确保开关有默认值
-if (typeof $persistentStore.read('tmdb_enable_lang') === 'undefined') {
-    $persistentStore.write('true', 'tmdb_enable_lang');
-}
-if (typeof $persistentStore.read('tmdb_enable_adult') === 'undefined') {
-    $persistentStore.write('true', 'tmdb_enable_adult');
-}
-if (typeof $persistentStore.read('tmdb_enable_region') === 'undefined') {
-    $persistentStore.write('true', 'tmdb_enable_region');
-}
-$done();
-
-[Panel]
-# 控制面板定义
-TMDB-Config = script-name=TMDB-Panel, update-interval=3600
-
-[Script]
-# 面板UI生成脚本
-TMDB-Panel = script-path=script-text, script-text=
-const langStatus = $persistentStore.read('tmdb_enable_lang') === 'true';
-const adultStatus = $persistentStore.read('tmdb_enable_adult') === 'true';
-const regionStatus = $persistentStore.read('tmdb_enable_region') === 'true';
-
-$done({
-    title: "TMDB API 优化设置",
-    style: "interface",
-    content: [
-        {
-            title: "中文语言 (zh-CN)",
-            style: langStatus ? "switchOn" : "switchOff",
-            // 关键：使用 switch:// 协议触发动作
-            action: `switch://tmdb_enable_lang?enable=${!langStatus}`
-        },
-        {
-            title: "成人内容 (include_adult)",
-            style: adultStatus ? "switchOn" : "switchOff",
-            action: `switch://tmdb_enable_adult?enable=${!adultStatus}`
-        },
-        {
-            title: "地区优化 (CN)",
-            style: regionStatus ? "switchOn" : "switchOff",
-            action: `switch://tmdb_enable_region?enable=${!regionStatus}`
-        }
-    ]
-});
-
-# 开关动作处理脚本
-^switch://tmdb_enable_(\w+)\?enable=(true|false) url script-echo-response script-path=script-text, script-text=
-const matches = $request.url.match(/switch:\/\/tmdb_enable_(\w+)\?enable=(true|false)/);
-if (matches) {
-    const key = matches[1];
-    const enable = matches[2] === 'true';
-    $persistentStore.write(enable.toString(), `tmdb_enable_${key}`);
-    $notification.post(`TMDB 设置`, `"${key}" 已${enable ? "开启" : "关闭"}`, "");
-}
-$done({
-    response: {
-        body: JSON.stringify({})
-    }
-});
+[Plugin]
+# 插件信息显示
+type = interface
+title = TMDB API优化设置
+content = [
+  {
+    "type": "label",
+    "title": "当前状态",
+    "subtitle": "语言: ${tmdb_lang_enabled==true ? '开启' : '关闭'}, 成人内容: ${tmdb_adult_enabled==true ? '开启' : '关闭'}, 地区: ${tmdb_region_enabled==true ? '开启' : '关闭'}"
+  },
+  {
+    "type": "label", 
+    "title": "功能说明",
+    "subtitle": "为TMDB API自动添加优化参数"
+  }
+]
