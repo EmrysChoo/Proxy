@@ -1,37 +1,19 @@
-#!name=TMDB+T66Y+Forward 解锁合集
-#!desc=解锁TMDB成人内容、T66Y移动版跳转、Forward成人内容开关合集
+#!name=解锁合集 插件
+#!desc=TMDB 成人／T66Y 跳转／Forward 成人 内容开关管理
 #!author=Emrys
-#!version=1.0
-#!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Video.png
+#!version=1.3
 
-[Rule]
-# 这里可以放一些通用规则（可选）
+[Arguments]
+tmdb_unlock = true, toggle, “启用 TMDB 成人内容解锁”
+t66y_redirect = true, toggle, “启用 T66Y 移动版跳转”
+forward_unlock = true, toggle, “启用 Forward 成人内容解锁”
 
 [Rewrite]
-# TMDB成人内容开关
-^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true tag=TMDB_Adult
-
-# T66Y移动版跳转
-^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3 tag=T66Y_Mobile
-
-# Forward成人内容开关
-^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2 tag=Forward_Adult
-
-[Plugin]
-# TMDB 成人内容解锁
-plugin_enabled=1
-plugin_name=TMDB 成人内容解锁
-rewrite=TMDB_Adult
-enabled=true
+# TMDB 成人内容
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true tag=TMDB_Adult enabled=${tmdb_unlock}
 
 # T66Y 移动版跳转
-plugin_enabled=1
-plugin_name=T66Y 移动版跳转
-rewrite=T66Y_Mobile
-enabled=true
+^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3 tag=T66Y_Mobile enabled=${t66y_redirect}
 
 # Forward 成人内容解锁
-plugin_enabled=1
-plugin_name=Forward 成人内容解锁
-rewrite=Forward_Adult
-enabled=true
+^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2 tag=Forward_Adult enabled=${forward_unlock}
