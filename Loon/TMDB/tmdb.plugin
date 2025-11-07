@@ -12,7 +12,5 @@ arg2 = switch,true,tag=成人内容
 hostname = api.themoviedb.org
 
 [Script]
-http-请求 ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/TMDB/tmdb.js, requires-body=false, timeout=30, tag=TMDb增强, enable=true, argument="forceChinese={arg1}&enableAdult={arg2}"
-
-[Rule]
-# 不需要Rule部分，因为这是通过Script实现的请求修改
+# 匹配TMDb v3下的所有接口，但排除/movie/{id}/images与/tv/{id}/images
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-path=https://raw.githubusercontent.com/EmrysChoo/Quantumult-X/main/scripts/tmdb.js, tag=TMDb增强, enable=true
