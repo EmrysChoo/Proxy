@@ -1,36 +1,45 @@
-# ============================================
-# Loon Plugin: TMDb增强
-# 功能: 为 TMDb API 自动添加 language=zh-CN 与 include_adult=true（可开关）
-# 作者: Evan
-# 版本: 1.0.0
-# 图标: TMDb 官方图标
-# 更新时间: 2025-11-07
-# ============================================
+#!name=TMDb增强
+#!desc=在 TMDb API 请求中自动注入 language=zh-CN 与 include_adult=true（可分别在插件界面关闭）。会排除 movie/{id}/images 与 tv/{id}/images 图片元数据接口，不影响图片 CDN 请求。
+#!author=Evan
+#!icon=https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
+#!date=2025-11-07
 
-[General]
-name = TMDb增强
-desc = 为 TMDb API 请求自动添加 language=zh-CN 与 include_adult=true；插件内可单独开关强制中文与成人内容。
-author = Evan
-version = 1.0.0
-icon = https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
-
-[Arguments]
-forceChinese = true
-enableAdult = true
+[Argument]
+arg1 = switch,true,tag=强制中文
+arg2 = switch,true,tag=成人内容
 
 [MITM]
 hostname = api.themoviedb.org
 
 [Script]
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-content=
+# 匹配 TMDb v3 下的所有接口，但排除 /movie/{id}/images 与 /tv/{id}/images
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-content=(
+/**
+ * TMDb增强（Loon 插件内联脚本）
+ * 接收参数示例：argument="forceChinese={arg1},enableAdult={arg2}"
+ * 插件界面开关:
+ *   forceChinese -> 是否强制添加 language=zh-CN
+ *   enableAdult  -> 是否强制添加 include_adult=true
+ */
 (() => {
   try {
     const urlStr = $request.url || '';
     if (!urlStr) { $done({}); return; }
-    const url = new URL(urlStr);
 
-    const forceChinese = (typeof $argument !== 'undefined' && typeof $argument.forceChinese !== 'undefined') ? ($argument.forceChinese === 'true') : true;
-    const enableAdult = (typeof $argument !== 'undefined' && typeof $argument.enableAdult !== 'undefined') ? ($argument.enableAdult === 'true') : true;
+    // 读取通过 argument 传入的键值（如果未传入则默认 true）
+    // 注意：Loon 会把 argument="k=v" 中的 v 替换为 {argX} 的值（true/false）
+    let forceChinese = true;
+    let enableAdult = true;
+    try {
+      if (typeof $argument !== 'undefined') {
+        if (typeof $argument.forceChinese !== 'undefined') forceChinese = ($argument.forceChinese === 'true');
+        if (typeof $argument.enableAdult !== 'undefined') enableAdult = ($argument.enableAdult === 'true');
+      }
+    } catch (e) {
+      // 兼容性：保持默认 true
+    }
+
+    const url = new URL(urlStr);
 
     if (forceChinese) {
       url.searchParams.set('language', 'zh-CN');
@@ -39,11 +48,11 @@ http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|mov
       url.searchParams.set('include_adult', 'true');
     }
 
-    console.log(`[TMDb增强] 请求修改 → ${url.toString()} | 中文=${forceChinese} 成人=${enableAdult}`);
+    console.log(`[TMDb增强] 修改请求 → ${url.toString()} | 中文=${forceChinese} 成人=${enableAdult}`);
     $done({ url: url.toString() });
   } catch (err) {
     console.log('[TMDb增强] 错误: ' + err);
     $done({});
   }
 })()
-, tag=TMDb增强, enable=true
+, tag=TMDb增强, enable=true, argument="forceChinese={arg1},enableAdult={arg2}"
