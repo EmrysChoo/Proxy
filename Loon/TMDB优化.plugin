@@ -1,35 +1,38 @@
 [General]
 name = TMDB API优化插件
-author = Evan
-version = 1.0.0
+author = YourName
+version = 1.1.0
 description = 自动为TMDB API请求添加中文语言和成人内容参数，可分别控制开关
 icon = https://www.themoviedb.org/assets/2/favicon-32x32-543a21832c8931d3494a68881bef6e5b.png
 update = 2024-01-01
 
 [Script]
-# TMDB语言优化脚本
-enabled = true
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(search\/movie|discover\/movie|movie\/\d+|search\/tv|discover\/tv|tv\/\d+|search\/person|search\/collection)(\?.*)?$ script-path=script-text, requires-body=true, timeout=10, script-text=
+# 主脚本 - 处理所有TMDB API请求
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!.*\/(images?|poster|backdrop|logo)).* script-path=script-text, requires-body=true, timeout=10, script-text=
 (() => {
     'use strict';
     const url = $request.url;
     const newUrl = new URL(url);
     
     // 检查是否已启用语言优化
-    if (!$persistentStore.read('TMDB_LANGUAGE_ENABLED') || $persistentStore.read('TMDB_LANGUAGE_ENABLED') === 'true') {
+    const langEnabled = $persistentStore.read('TMDB_LANGUAGE_ENABLED');
+    if (langEnabled === 'true' || langEnabled === null) {
         if (!newUrl.searchParams.has('language')) {
             newUrl.searchParams.set('language', 'zh-CN');
         }
     }
     
     // 检查是否已启用成人内容
-    if (!$persistentStore.read('TMDB_ADULT_ENABLED') || $persistentStore.read('TMDB_ADULT_ENABLED') === 'true') {
-        if (!newUrl.searchParams.set('include_adult', 'true');
+    const adultEnabled = $persistentStore.read('TMDB_ADULT_ENABLED');
+    if (adultEnabled === 'true' || adultEnabled === null) {
+        if (!newUrl.searchParams.has('include_adult')) {
+            newUrl.searchParams.set('include_adult', 'true');
         }
     }
     
     // 检查是否已启用地区优化
-    if (!$persistentStore.read('TMDB_REGION_ENABLED') || $persistentStore.read('TMDB_REGION_ENABLED') === 'true') {
+    const regionEnabled = $persistentStore.read('TMDB_REGION_ENABLED');
+    if (regionEnabled === 'true' || regionEnabled === null) {
         if (!newUrl.searchParams.has('region')) {
             newUrl.searchParams.set('region', 'CN');
         }
@@ -38,6 +41,84 @@ http-request ^https?:\/\/api\.themoviedb\.org\/3\/(search\/movie|discover\/movie
     $done({ url: newUrl.toString() });
 })();
 
-# TMDB详情页优化脚本
-enabled = true
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+(\?.*)?$ script-path=script-text, requires-body=true, timeout=10, script
+# 初始化设置脚本
+cron "0 0 * * *" script-path=script-text, script-text=
+(() => {
+    'use strict';
+    // 初始化默认设置
+    if ($persistentStore.read('TMDB_LANGUAGE_ENABLED') === null) {
+        $persistentStore.write('true', 'TMDB_LANGUAGE_ENABLED');
+    }
+    if ($persistentStore.read('TMDB_ADULT_ENABLED') === null) {
+        $persistentStore.write('true', 'TMDB_ADULT_ENABLED');
+    }
+    if ($persistentStore.read('TMDB_REGION_ENABLED') === null) {
+        $persistentStore.write('true', 'TMDB_REGION_ENABLED');
+    }
+    $done();
+})();
+
+[Panel]
+# 主面板
+TMDB设置 = script-name=TMDB面板, update-interval=3600
+
+[Script]
+# 面板脚本
+TMDB面板 = script-path=script-text, script-text=
+(() => {
+    'use strict';
+    
+    const langEnabled = $persistentStore.read('TMDB_LANGUAGE_ENABLED') === 'true';
+    const adultEnabled = $persistentStore.read('TMDB_ADULT_ENABLED') === 'true';
+    const regionEnabled = $persistentStore.read('TMDB_REGION_ENABLED') === 'true';
+    
+    const panel = {
+        title: "TMDB API优化设置",
+        content: [
+            {
+                title: "语言优化 (zh-CN)",
+                style: langEnabled ? "switchOn" : "switchOff",
+                action: `switch://TMDB_LANGUAGE_ENABLED?enable=${!langEnabled}`
+            },
+            {
+                title: "成人内容显示",
+                style: adultEnabled ? "switchOn" : "switchOff", 
+                action: `switch://TMDB_ADULT_ENABLED?enable=${!adultEnabled}`
+            },
+            {
+                title: "地区优化 (CN)",
+                style: regionEnabled ? "switchOn" : "switchOff",
+                action: `switch://TMDB_REGION_ENABLED?enable=${!regionEnabled}`
+            },
+            {
+                title: "当前状态",
+                description: `语言: ${langEnabled ? "开启" : "关闭"} | 成人内容: ${adultEnabled ? "开启" : "关闭"} | 地区: ${regionEnabled ? "开启" : "关闭"}`
+            }
+        ]
+    };
+    
+    $done(panel);
+})();
+
+# 开关切换处理
+^switch://TMDB_(\w+)\?enable=(true|false) url script-echo-response script-text=
+(() => {
+    'use strict';
+    const key = $request.url.match(/TMDB_(\w+)/)[1];
+    const enable = $request.url.includes('enable=true');
+    
+    $persistentStore.write(enable.toString(), `TMDB_${key}`);
+    
+    $done({
+        response: {
+            body: JSON.stringify({
+                notification: {
+                    content: `TMDB ${key.replace('_', ' ')} ${enable ? '开启' : '关闭'}`
+                }
+            })
+        }
+    });
+})();
+
+[Mitm]
+hostname = api.themoviedb.org
