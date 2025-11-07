@@ -1,52 +1,20 @@
-#!name=TMDb增强
-#!desc=在 TMDb API 请求中自动注入 language=zh-CN 与 include_adult=true（可分别在插件界面关闭）。会排除 movie/{id}/images 与 tv/{id}/images 图片元数据接口，不影响图片 CDN 请求。
-#!author=Evan
-#!icon=https://www.themoviedb.org/assets/2/apple-touch-icon-180x180-4e4c2d016f8f1efbb46b9c7dc0c5b8d4f716db57f9aaf59bb4ce39ad2636bcb6.png
-#!date=2025-11-07
-
-[Argument]
-arg1 = switch,true,tag=强制中文
-arg2 = switch,true,tag=成人内容
-
-[MITM]
-hostname = api.themoviedb.org
-
 [Script]
-# 匹配 TMDb v3 下的所有接口，但排除 /movie/{id}/images 与 /tv/{id}/images
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images)|movie\/\d+\/(image|images)).* script-content=(
-/**
- * TMDb增强（Loon 插件内联脚本）
- * 接收参数示例：argument="forceChinese={arg1},enableAdult={arg2}"
- * 插件界面开关:
- *   forceChinese -> 是否强制添加 language=zh-CN
- *   enableAdult  -> 是否强制添加 include_adult=true
- */
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!tv\/\d+\/(image|images|season\/\d+\/episode\/\d+\/images)|movie\/\d+\/(image|images)).* script-content=(
 (() => {
   try {
     const urlStr = $request.url || '';
     if (!urlStr) { $done({}); return; }
 
-    // 读取通过 argument 传入的键值（如果未传入则默认 true）
-    // 注意：Loon 会把 argument="k=v" 中的 v 替换为 {argX} 的值（true/false）
     let forceChinese = true;
     let enableAdult = true;
-    try {
-      if (typeof $argument !== 'undefined') {
+    if (typeof $argument !== 'undefined') {
         if (typeof $argument.forceChinese !== 'undefined') forceChinese = ($argument.forceChinese === 'true');
         if (typeof $argument.enableAdult !== 'undefined') enableAdult = ($argument.enableAdult === 'true');
-      }
-    } catch (e) {
-      // 兼容性：保持默认 true
     }
 
     const url = new URL(urlStr);
-
-    if (forceChinese) {
-      url.searchParams.set('language', 'zh-CN');
-    }
-    if (enableAdult) {
-      url.searchParams.set('include_adult', 'true');
-    }
+    if (forceChinese) url.searchParams.set('language', 'zh-CN');
+    if (enableAdult) url.searchParams.set('include_adult', 'true');
 
     console.log(`[TMDb增强] 修改请求 → ${url.toString()} | 中文=${forceChinese} 成人=${enableAdult}`);
     $done({ url: url.toString() });
