@@ -1,15 +1,100 @@
 [General]
-name = TMDB Test
-author = Test
+name = TMDB API 优化 (稳定版)
+author = YourName
+version = 1.2.0
+description = 优化TMDB API请求，支持独立开关控制
+icon = https://www.themoviedb.org/assets/2/favicon-32x32-543a21832c8931d3494a68881bef6e5b.png
+update = 2024-01-01
+
+[MITM]
+hostname = api.themoviedb.org
 
 [Script]
-http-request ^https?:\/\/api\.themoviedb\.org\/3\/search\/movie script-path=script-text, requires-body=true, script-text=
-const url = $request.url;
-if (!url.includes('language=')) {
-    $done({url: url + (url.includes('?') ? '&' : '?') + 'language=zh-CN'});
-} else {
-    $done({url: url});
-}
+# 主处理脚本
+enable = true
+# 使用 script-text 直接嵌入，避免外部文件依赖
+http-request ^https?:\/\/api\.themoviedb\.org\/3\/(?!.*\/(image|images|poster|backdrop|logo)) script-path=script-text, requires-body=true, timeout=30, script-text=
+(async function() {
+    let url = $request.url;
+    // 使用持久化存储读取开关状态，默认值为"true"（开启）
+    const enableLang = typeof $persistentStore.read('tmdb_enable_lang') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_lang');
+    const enableAdult = typeof $persistentStore.read('tmdb_enable_adult') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_adult');
+    const enableRegion = typeof $persistentStore.read('tmdb_enable_region') === 'undefined' ? 'true' : $persistentStore.read('tmdb_enable_region');
 
-[Mitm]
-hostname = api.themoviedb.org
+    if (enableLang === 'true' || enableAdult === 'true' || enableRegion === 'true') {
+        const urlObj = new URL(url);
+        if (enableLang === 'true' && !urlObj.searchParams.has('language')) {
+            urlObj.searchParams.set('language', 'zh-CN');
+        }
+        if (enableAdult === 'true' && !urlObj.searchParams.has('include_adult')) {
+            urlObj.searchParams.set('include_adult', 'true');
+        }
+        if (enableRegion === 'true' && !urlObj.searchParams.set('region', 'CN');
+        }
+        url = urlObj.toString();
+    }
+    $done({ url });
+})();
+
+# 面板脚本 - 用于生成UI和控制逻辑
+cron "0 0 * * *" script-path=script-text, script-text=
+// 每日初始化一次，确保开关有默认值
+if (typeof $persistentStore.read('tmdb_enable_lang') === 'undefined') {
+    $persistentStore.write('true', 'tmdb_enable_lang');
+}
+if (typeof $persistentStore.read('tmdb_enable_adult') === 'undefined') {
+    $persistentStore.write('true', 'tmdb_enable_adult');
+}
+if (typeof $persistentStore.read('tmdb_enable_region') === 'undefined') {
+    $persistentStore.write('true', 'tmdb_enable_region');
+}
+$done();
+
+[Panel]
+# 控制面板定义
+TMDB-Config = script-name=TMDB-Panel, update-interval=3600
+
+[Script]
+# 面板UI生成脚本
+TMDB-Panel = script-path=script-text, script-text=
+const langStatus = $persistentStore.read('tmdb_enable_lang') === 'true';
+const adultStatus = $persistentStore.read('tmdb_enable_adult') === 'true';
+const regionStatus = $persistentStore.read('tmdb_enable_region') === 'true';
+
+$done({
+    title: "TMDB API 优化设置",
+    style: "interface",
+    content: [
+        {
+            title: "中文语言 (zh-CN)",
+            style: langStatus ? "switchOn" : "switchOff",
+            // 关键：使用 switch:// 协议触发动作
+            action: `switch://tmdb_enable_lang?enable=${!langStatus}`
+        },
+        {
+            title: "成人内容 (include_adult)",
+            style: adultStatus ? "switchOn" : "switchOff",
+            action: `switch://tmdb_enable_adult?enable=${!adultStatus}`
+        },
+        {
+            title: "地区优化 (CN)",
+            style: regionStatus ? "switchOn" : "switchOff",
+            action: `switch://tmdb_enable_region?enable=${!regionStatus}`
+        }
+    ]
+});
+
+# 开关动作处理脚本
+^switch://tmdb_enable_(\w+)\?enable=(true|false) url script-echo-response script-path=script-text, script-text=
+const matches = $request.url.match(/switch:\/\/tmdb_enable_(\w+)\?enable=(true|false)/);
+if (matches) {
+    const key = matches[1];
+    const enable = matches[2] === 'true';
+    $persistentStore.write(enable.toString(), `tmdb_enable_${key}`);
+    $notification.post(`TMDB 设置`, `"${key}" 已${enable ? "开启" : "关闭"}`, "");
+}
+$done({
+    response: {
+        body: JSON.stringify({})
+    }
+});
