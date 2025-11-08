@@ -1,7 +1,7 @@
 #!name = 神秘钥匙
 #!desc = 支持 TMDB 限制内容解锁、T66Y 移动版跳转、Forward 限制内容解锁，含独立开关
 #!author = Evan
-#!version = 3.0.0
+#!version = 3.0
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Video.png
 
 [Argument]
