@@ -1,29 +1,26 @@
-#!name = 神秘钥匙（分体版）
-#!desc = 支持 TMDB、T66Y、Forward 功能解锁，独立开关控制
+#!name = 神秘钥匙
+#!desc = 支持 TMDB 限制内容解锁、T66Y 移动版跳转、Forward 限制内容解锁，含独立开关
 #!author = Evan
-#!version = 2.2
+#!version = 2.0
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Video.png
 
-[Plugin]
+[Argument]
+tmdb_unlock = switch, true, tag = TMDB 限制内容解锁
+t66y_redirect = switch, true, tag = T66Y 移动版跳转
+forward_unlock = switch, true, tag = Forward 限制内容解锁
+
+[Rewrite]
 # TMDB 限制内容解锁
-name = TMDB 限制内容解锁
-desc = 为 TMDB 搜索添加 include_adult=true 参数
-enable = false
-^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword\/connection)\?(?!.*include_adult=true)(.*)$ url 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+enable = {{{tmdb_unlock}}}
 
-[Plugin]
 # T66Y 移动版跳转
-name = T66Y 移动版跳转  
-desc = 将 T66Y 页面重定向到移动端版本
-enable = false
-^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ url 302 https://www.t66y.com//htm_mob/$1/$2/$3
+^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3
+enable = {{{t66y_redirect}}}
 
-[Plugin]
 # Forward 限制内容解锁
-name = Forward 限制内容解锁
-desc = 将 Forward 搜索中的 include_adult=false 改为 true
-enable = false
-^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ url 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2
+^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2
+enable = {{{forward_unlock}}}
 
 [MITM]
 hostname = api.themoviedb.org, forwardinfo.vvebo.vip, www.t66y.com
