@@ -1,7 +1,7 @@
 #!name = 神秘钥匙
-#!desc = TMDB/T66Y/Forward 解锁合集，含独立开关（JS 控制规则生效）
+#!desc = TMDB/T66Y/Forward 解锁合集：单文件 .lpx，脚本 API 实现，UI 开关控制
 #!author = Evan
-#!version = 3.0
+#!version = 3.2
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Video.png
 
 [Argument]
@@ -10,43 +10,54 @@ t66y_redirect = switch, true, tag=T66Y 移动版跳转,desc=是否启用 T66Y �
 forward_unlock = switch, true, tag=Forward 限制内容解锁,desc=是否启用 Forward 限制内容解锁
 
 [Script]
-# JS 控制 Rewrite URL 返回
-# 脚本会根据开关决定是否重写请求
-# 使用方式：在 [Rewrite] 段用 url script=http://... 或内联 JS
-# 这里采用内联 JS
-
-// 匹配 TMDB 搜索请求
-^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(.*)$
-script=javascript:
+# TMDB 搜索重写（http-request）
+http-request ^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword\/connection)\?(.*)$
+script = javascript:
 (function(request){
-  const enable = $argument.tmdb_unlock;
-  if(enable){
-    return "https://api.themoviedb.org/3/search/" + request.matches[1] + "?" + request.matches[2] + "&include_adult=true";
+  // 从文档 API 读取插件参数/开关
+  var enabled = ($argument && $argument.tmdb_unlock) || false;
+  if(!enabled){
+    // 不处理，直接结束（文档：$done() 不传参数表示放弃请求）
+    $done();
+    return;
   }
-  return null; // 不修改 URL
+  // 读取捕获组（多数 Loon 提供 request.matches）
+  var kind = (request.matches && request.matches[1]) || "";
+  var qs = (request.matches && request.matches[2]) || "";
+  var newUrl = "https://api.themoviedb.org/3/search/" + kind + "?" + qs + "&include_adult=true";
+  // 按照文档：$done({url: newUrl}) 替换请求 URL
+  $done({url: newUrl});
 })()
+, requires-body = false, timeout = 10, tag = [神秘钥匙] TMDB 重写, enable={tmdb_unlock}
 
-// 匹配 T66Y 移动版跳转
-^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$
-script=javascript:
+# T66Y 移动版跳转
+http-request ^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$
+script = javascript:
 (function(request){
-  const enable = $argument.t66y_redirect;
-  if(enable){
-    return "https://www.t66y.com//htm_mob/" + request.matches[1] + "/" + request.matches[2] + "/" + request.matches[3];
-  }
-  return null;
+  var enabled = ($argument && $argument.t66y_redirect) || false;
+  if(!enabled){ $done(); return; }
+  var a = (request.matches && request.matches[1]) || "";
+  var b = (request.matches && request.matches[2]) || "";
+  var c = (request.matches && request.matches[3]) || "";
+  var newUrl = "https://www.t66y.com//htm_mob/" + a + "/" + b + "/" + c;
+  $done({url: newUrl});
 })()
+, requires-body = false, timeout = 10, tag = [神秘钥匙] T66Y 重写, enable={t66y_redirect}
 
-// 匹配 Forward 成人内容解锁
-^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$
-script=javascript:
+# Forward include_adult 重写
+http-request ^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*?)(?:include_adult=(?:true|false))?(.*)$
+script = javascript:
 (function(request){
-  const enable = $argument.forward_unlock;
-  if(enable){
-    return "https://forwardinfo.vvebo.vip/search/multi?" + request.matches[1] + "include_adult=true" + (request.matches[2]||"");
-  }
-  return null;
+  var enabled = ($argument && $argument.forward_unlock) || false;
+  if(!enabled){ $done(); return; }
+  var q1 = (request.matches && request.matches[1]) || "";
+  var q2 = (request.matches && request.matches[2]) || "";
+  // 构造 query，保证不会重复 include_adult
+  var prefix = q1 && q1.length && !q1.endsWith('&') ? q1 + '&' : q1;
+  var newUrl = "https://forwardinfo.vvebo.vip/search/multi?" + prefix + "include_adult=true" + (q2 || '');
+  $done({url: newUrl});
 })()
+, requires-body = false, timeout = 10, tag = [神秘钥匙] Forward 重写, enable={forward_unlock}
 
 [MITM]
 hostname = api.themoviedb.org, forwardinfo.vvebo.vip, www.t66y.com
