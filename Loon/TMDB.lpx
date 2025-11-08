@@ -21,3 +21,7 @@ enabled={{{t66y_redirect}}}
 # Forward 限制内容解锁
 enabled={{{forward_unlock}}}
 ^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2
+
+[MITM]
+hostname = api.themoviedb.org, forwardinfo.vvebo.vip, www.t66y.com
+
