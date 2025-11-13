@@ -1,0 +1,19 @@
+[Plugin]
+name = Quark WebDAV
+desc = 将夸克网盘转换为 WebDAV 服务
+author = Evan
+version = 1.0.0
+
+[Script]
+enable = true
+type = http-response
+pattern = ^http://quark\.example\.com/
+script-path = https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/quark.js
+requires-body = true
+
+[Script]
+enable = true
+type = http-request  
+pattern = ^http://quark\.example\.com/
+script-path = https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/quark.js
+requires-body = true
