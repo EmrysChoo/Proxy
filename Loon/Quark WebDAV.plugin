@@ -1,17 +1,16 @@
-[Plugin]
-name = Quark WebDAV
-desc = 将夸克网盘转换为 WebDAV 服务，支持标准 WebDAV 协议访问
-author = YourName
-version = 1.0.0
-enabled = true
-mode = host
+# Loon Plugin
+# 让 FileBall 通过 WebDAV 挂载夸克网盘
+name: Quark WebDAV
+desc: 使用 WebDAV 协议挂载夸克网盘，密码即 token
+author: YohnChu & GPT
+version: 1.0
+icon: https://raw.githubusercontent.com/github/explore/main/topics/webdav/webdav.png
 
-[Script]
-http-request ^http://quark\.example\.com/ auth = true, requires-body = true, script-path = https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/quark.js
-http-response ^http://quark\.example\.com/ auth = true, requires-body = true, script-path = https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/quark.js
+# Loon 监听的端口
+httpapi_port: 1789
 
-[Host]
-quark.example.com = 127.0.0.1
-
-[Mitm]
-hostname = quark.example.com
+script:
+  http-request:
+    match: ^http:\/\/quark\.example\.com(:1789)?\/.*
+    script-path: quark-webdav.js
+    timeout: 60
