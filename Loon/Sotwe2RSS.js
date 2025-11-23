@@ -1,38 +1,64 @@
 /*
- * @name: Twitter RSS 生成器 (Sotwe Bridge)
+ * @name: Twitter RSS 生成器 (Sotwe Bridge) v2
  * @author: Gemini
- * @desc: 实时抓取 Sotwe 页面数据并生成 RSS XML。
- * @use: http://127.0.0.1/twitter/USERNAME
+ * @desc: 实时抓取 Sotwe 页面数据并生成 RSS XML。增强了请求头和错误反馈。
+ * @use: http://myrss.loon/twitter/USERNAME
  */
 
 const url = $request.url;
+// 假设 URL 格式是 http://myrss.loon/twitter/USERNAME
 const username = url.split("/").pop();
 const targetUrl = `https://www.sotwe.com/${username}`;
-const headers = { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" };
+
+console.log(`[Sotwe2RSS] Attempting to fetch: ${targetUrl}`);
+
+const headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Referer": "https://www.sotwe.com/", // 增强反爬能力
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"
+};
 
 $httpClient.get({ url: targetUrl, headers: headers }, (error, response, data) => {
     if (error || response.status !== 200) {
-        $done({ response: { status: response.status || 500, body: "Sotwe Network Error." } });
+        console.error(`[Sotwe2RSS] Network Error: Status=${response?.status}, Error=${error}`);
+        $done({ response: { status: response?.status || 500, body: `Sotwe Network Error or Status: ${response?.status}` } });
         return;
     }
+    
     try {
+        // 核心解析逻辑：提取 __NEXT_DATA__ JSON
         const regex = /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/;
         const match = data.match(regex);
+
         if (!match || !match[1]) {
-            $done({ response: { status: 404, body: "User not found or Sotwe layout changed." } });
+            console.error(`[Sotwe2RSS] Parse Failure: __NEXT_DATA__ block not found.`);
+            // 检查是否是 Sotwe 页面本身返回了错误
+            if (data.includes("The user does not exist")) {
+                 $done({ response: { status: 404, body: `User ${username} not found on Sotwe.` } });
+                 return;
+            }
+            $done({ response: { status: 404, body: `Sotwe Layout Changed or Key Data Missing.` } });
             return;
         }
+
         const json = JSON.parse(match[1]);
         const posts = json.props?.pageProps?.data || [];
         const userProfile = json.props?.pageProps?.user || { name: username, screenName: username };
         
+        // 确认数据是否有效
+        if (posts.length === 0 && !userProfile.screenName) {
+            console.warn(`[Sotwe2RSS] Warning: Parsed data is empty.`);
+        }
+        
+        // --- 构造 RSS XML ---
         let rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
     <title>${escapeXml(userProfile.name)} (@${userProfile.screenName})</title>
     <description>Twitter feed for ${userProfile.name} via Sotwe</description>
     <link>https://twitter.com/${username}</link>
-    <generator>Loon Sotwe2RSS</generator>
+    <generator>Loon Sotwe2RSS v2</generator>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <ttl>15</ttl>`;
 
@@ -56,7 +82,8 @@ $httpClient.get({ url: targetUrl, headers: headers }, (error, response, data) =>
         });
 
     } catch (e) {
-        $done({ response: { status: 500, body: "Parse Error: " + e.message } });
+        console.error(`[Sotwe2RSS] Fatal Parse Error: ${e.message}`);
+        $done({ response: { status: 500, body: `Fatal Parse Error: ${e.message}` } });
     }
 });
 
