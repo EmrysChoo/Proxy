@@ -1,8 +1,9 @@
-#!name=Twitter RSS 生成器 (Sotwe Bridge) V2
-#!desc=通过拦截 myrss.loon/twitter/USERNAME 请求，实时抓取 Sotwe 镜像网站数据，并生成 News Explorer 可识别的 RSS XML。
-#!author=由 Gemini 协助生成
-#!date=2025-11-23
+#!name=Sotwe2RSS
+#!desc=Convert Sotwe Twitter mirror pages into RSS feeds
+#!author=Yohn
+#!icon=https://www.sotwe.com/favicon.ico
+#!version=1.0.0
 
 [Script]
-# 拦截规则：现在针对新的虚拟域名 myrss.loon
-http-request ^http:\/\/myrss\.loon\/twitter\/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/Sotwe2RSS.js, timeout=10, tag=TwitterRSS, img-url=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Twitter.png
+http-request ^https?:\/\/.+\.?sotwe\.com\/([^\/\?]+)$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/Sotwe2RSS.js, timeout=20
+http-request ^https?:\/\/.+\.?sotwe\.com\/([^\/\?]+)\/$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/Sotwe2RSS.js, timeout=20
