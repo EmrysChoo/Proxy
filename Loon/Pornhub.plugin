@@ -1,22 +1,16 @@
 #!name = Pornhub RSS Auto Quality
-#!desc = 自动将 RSS feed 中的 Pornhub 视频链接升级到更高清晰度（2160P 优先）仅替换 link，不触碰 XML 结构
+#!desc = 自动升级 RSS 中的 Pornhub 视频链接到 2160P（不修改 XML）
 #!author = YohnChu
-#!version = 1.0
+#!version = 1.1
 
 [Rewrite]
-# 仅针对 RSS 中出现的 Pornhub 视频 URL（view_video.php）
-# 将链接加上 quality 参数：优先 2160，其次 1080
+# ① RSS 链接没有 quality 参数 → 添加 &quality=2160
+^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=([A-Za-z0-9]+)$ url param-add quality=2160
 
-# ① 如果 RSS 内没有清晰度参数 → 自动添加 2160（默认最高）
-^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=([A-Za-z0-9]+)$ url simple-adder "&quality=2160"
+# ② 若原本有低清晰度 → 替换为 2160
+^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=[A-Za-z0-9]+(&|&amp;)quality=(360|480|720|1080) url regex-replace "quality=(360|480|720|1080)" "quality=2160"
 
-# ② 若原本有低于 2160 的清晰度，则替换为 2160
-^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=[A-Za-z0-9]+(&|&amp;)quality=(360|480|720|1080) url regex-replace "&quality=(360|480|720|1080)" "&quality=2160"
-
-# ③ 保留已为 2160 的链接（无需处理）
-
-# ④ 若 2160 源不存在，Pornhub 会自动 fallback 到 1080（不需要额外逻辑）
+# ③ 已为 2160 的链接不处理（无需写规则）
 
 [MITM]
-# RSS 不需要 MITM，避免破坏 XML
-hostname = 
+# 留空表示不启用 MITM，不写 hostname（Loon 规范要求）
