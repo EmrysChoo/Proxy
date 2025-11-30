@@ -1,13 +1,11 @@
-#!name = Pornhub RSS Auto Max Quality 1080 (紧凑版)
+#!name = Pornhub RSS Auto Max Quality 1080
 #!desc = 单条规则升级 Pornhub 视频到 1080P（保持 1080/2160 不变）
 #!author = YohnChu
 #!version = 1.6
 #!updated = 2025-11-30
 
 [Rewrite]
-// 单条规则：处理无 quality 或低于 1080 的链接
 ^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=[A-Za-z0-9]+(?:(&|&amp;)quality=(360|480|720))?$ url regex-replace "(?:(&|&amp;)quality=(360|480|720))?" "&quality=1080"
 
 [MITM]
-// 声明域名
 hostname = pornhub.com, www.pornhub.com, cn.pornhub.com
