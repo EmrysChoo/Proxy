@@ -5,7 +5,7 @@
 
 [Script]
 # 拦截 HTTP 响应体并执行替换
-http-response ^https?:\/\/rsshub\.ddns\.net\/pornhub\/model script-path=https://raw.githubusercontent.com/replace-me/ph_hd.js, script-update-interval=0, tag=PH_RSS_HD, requires-body=true, pattern=^https?:\/\/rsshub\.ddns\.net\/pornhub\/model
+http-response ^https?:\/\/rsshub\.ddns\.net\/pornhub\/model script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/ph_rss_hd.js, script-update-interval=0, tag=PH_RSS_HD, requires-body=true, pattern=^https?:\/\/rsshub\.ddns\.net\/pornhub\/model
 
 [MITM]
 hostname = rsshub.ddns.net
