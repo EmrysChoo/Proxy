@@ -1,6 +1,6 @@
 #!name = Pornhub RSS Auto Quality
 #!desc = 自动升级 RSS 中的 Pornhub 视频链接到 2160P（不修改 XML）
-#!author = YohnChu
+#!author = Yohn
 #!version = 1.1
 
 [Rewrite]
