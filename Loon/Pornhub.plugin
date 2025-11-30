@@ -1,18 +1,13 @@
-#!name = Pornhub RSS Auto Max Quality
-#!desc = 自动将 RSS 中的 Pornhub 视频链接升级到 2160P（不修改 XML）
+#!name = Pornhub RSS Auto Max Quality 1080 (紧凑版)
+#!desc = 单条规则升级 Pornhub 视频到 1080P（保持 1080/2160 不变）
 #!author = YohnChu
-#!version = 1.2
+#!version = 1.6
 #!updated = 2025-11-30
 
 [Rewrite]
-# ① RSS 链接无 quality 参数 → 添加 quality=2160
-^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=([A-Za-z0-9]+)$ url param-add quality=2160
-
-# ② 已有 quality 参数但低于 2160 → 替换为 2160
-^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=[A-Za-z0-9]+(&|&amp;)quality=(360|480|720|1080) url regex-replace "quality=(360|480|720|1080)" "quality=2160"
-
-# ③ 已为 2160 的链接不处理（无需规则）
+// 单条规则：处理无 quality 或低于 1080 的链接
+^https?:\/\/([^.]+\.)*pornhub\.com\/view_video\.php\?viewkey=[A-Za-z0-9]+(?:(&|&amp;)quality=(360|480|720))?$ url regex-replace "(?:(&|&amp;)quality=(360|480|720))?" "&quality=1080"
 
 [MITM]
-# 仅声明 Pornhub 域名（不会破坏 RSSHub，不会影响 XML）
+// 声明域名
 hostname = pornhub.com, www.pornhub.com, cn.pornhub.com
