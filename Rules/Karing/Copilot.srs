@@ -1,62 +1,57 @@
 # Copilot SRS 分流规则
 
-# 域名规则
-DOMAIN, api.msn.com
-DOMAIN, api.statsig.com
-DOMAIN, assets.msn.com
-DOMAIN, browser-intake-datadoghq.com
-DOMAIN, chat.openai.com.cdn.cloudflare.net
-DOMAIN, copilot.microsoft.com
-DOMAIN, gateway.bingviz.microsoft.net
-DOMAIN, gateway.bingviz.microsoftapp.net
-DOMAIN, in.appcenter.ms
-DOMAIN, location.microsoft.com
-DOMAIN, odc.officeapps.live.com
-DOMAIN, openai-api.arkoselabs.com
-DOMAIN, openaicomproductionae4b.blob.core.windows.net
-DOMAIN, production-openaicom-storage.azureedge.net
-DOMAIN, r.bing.com
-DOMAIN, self.events.data.microsoft.com
-DOMAIN, services.bingapis.com
-DOMAIN, static.cloudflareinsights.com
-DOMAIN, sydney.bing.com
-DOMAIN, www.bing.com
+DOMAIN, api.msn.com, DIRECT
+DOMAIN, api.statsig.com, DIRECT
+DOMAIN, assets.msn.com, DIRECT
+DOMAIN, browser-intake-datadoghq.com, DIRECT
+DOMAIN, chat.openai.com.cdn.cloudflare.net, DIRECT
+DOMAIN, copilot.microsoft.com, DIRECT
+DOMAIN, gateway.bingviz.microsoft.net, DIRECT
+DOMAIN, gateway.bingviz.microsoftapp.net, DIRECT
+DOMAIN, in.appcenter.ms, DIRECT
+DOMAIN, location.microsoft.com, DIRECT
+DOMAIN, odc.officeapps.live.com, DIRECT
+DOMAIN, openai-api.arkoselabs.com, DIRECT
+DOMAIN, openaicomproductionae4b.blob.core.windows.net, DIRECT
+DOMAIN, production-openaicom-storage.azureedge.net, DIRECT
+DOMAIN, r.bing.com, DIRECT
+DOMAIN, self.events.data.microsoft.com, DIRECT
+DOMAIN, services.bingapis.com, DIRECT
+DOMAIN, static.cloudflareinsights.com, DIRECT
+DOMAIN, sydney.bing.com, DIRECT
+DOMAIN, www.bing.com, DIRECT
 
-# 域名后缀规则
-DOMAIN-SUFFIX, algolia.net
-DOMAIN-SUFFIX, api.microsoftapp.net
-DOMAIN-SUFFIX, auth0.com
-DOMAIN-SUFFIX, bing-shopping.microsoft-falcon.io
-DOMAIN-SUFFIX, challenges.cloudflare.com
-DOMAIN-SUFFIX, chatgpt.com
-DOMAIN-SUFFIX, chatgpt.livekit.cloud
-DOMAIN-SUFFIX, client-api.arkoselabs.com
-DOMAIN-SUFFIX, edgeservices.bing.com
-DOMAIN-SUFFIX, events.statsigapi.net
-DOMAIN-SUFFIX, featuregates.org
-DOMAIN-SUFFIX, host.livekit.cloud
-DOMAIN-SUFFIX, identrust.com
-DOMAIN-SUFFIX, intercom.io
-DOMAIN-SUFFIX, intercomcdn.com
-DOMAIN-SUFFIX, launchdarkly.com
-DOMAIN-SUFFIX, oaistatic.com
-DOMAIN-SUFFIX, oaiusercontent.com
-DOMAIN-SUFFIX, observeit.net
-DOMAIN-SUFFIX, openai.com
-DOMAIN-SUFFIX, openaiapi-site.azureedge.net
-DOMAIN-SUFFIX, openaicom.imgix.net
-DOMAIN-SUFFIX, segment.io
-DOMAIN-SUFFIX, sentry.io
-DOMAIN-SUFFIX, stripe.com
-DOMAIN-SUFFIX, turn.livekit.cloud
+DOMAIN-SUFFIX, algolia.net, DIRECT
+DOMAIN-SUFFIX, api.microsoftapp.net, DIRECT
+DOMAIN-SUFFIX, auth0.com, DIRECT
+DOMAIN-SUFFIX, bing-shopping.microsoft-falcon.io, DIRECT
+DOMAIN-SUFFIX, challenges.cloudflare.com, DIRECT
+DOMAIN-SUFFIX, chatgpt.com, DIRECT
+DOMAIN-SUFFIX, chatgpt.livekit.cloud, DIRECT
+DOMAIN-SUFFIX, client-api.arkoselabs.com, DIRECT
+DOMAIN-SUFFIX, edgeservices.bing.com, DIRECT
+DOMAIN-SUFFIX, events.statsigapi.net, DIRECT
+DOMAIN-SUFFIX, featuregates.org, DIRECT
+DOMAIN-SUFFIX, host.livekit.cloud, DIRECT
+DOMAIN-SUFFIX, identrust.com, DIRECT
+DOMAIN-SUFFIX, intercom.io, DIRECT
+DOMAIN-SUFFIX, intercomcdn.com, DIRECT
+DOMAIN-SUFFIX, launchdarkly.com, DIRECT
+DOMAIN-SUFFIX, oaistatic.com, DIRECT
+DOMAIN-SUFFIX, oaiusercontent.com, DIRECT
+DOMAIN-SUFFIX, observeit.net, DIRECT
+DOMAIN-SUFFIX, openai.com, DIRECT
+DOMAIN-SUFFIX, openaiapi-site.azureedge.net, DIRECT
+DOMAIN-SUFFIX, openaicom.imgix.net, DIRECT
+DOMAIN-SUFFIX, segment.io, DIRECT
+DOMAIN-SUFFIX, sentry.io, DIRECT
+DOMAIN-SUFFIX, stripe.com, DIRECT
+DOMAIN-SUFFIX, turn.livekit.cloud, DIRECT
 
-# 域名关键词规则
-DOMAIN-KEYWORD, openaicom-api
+DOMAIN-KEYWORD, openaicom-api, DIRECT
 
-# IP 地址范围规则
-IP-CIDR, 24.199.123.28/32, no-resolve
-IP-CIDR, 64.23.132.171/32, no-resolve
+IP-CIDR, 24.199.123.28/32, DIRECT
+IP-CIDR, 64.23.132.171/32, DIRECT
 
-# ASN 规则
-IP-ASN, 14061, no-resolve
-IP-ASN, 20473, no-resolve
+IP-ASN, 14061, DIRECT
+IP-ASN, 20473, DIRECT
