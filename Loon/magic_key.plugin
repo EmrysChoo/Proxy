@@ -1,12 +1,15 @@
 #!name = 神秘钥匙
 #!desc = TMDB：解锁搜索限制；T66Y：移动版跳转；Forward：解锁搜索限制
 #!author = Evan
-#!version = 1.6
-#!updated = 2025-11-08
+#!version = 1.7
+#!updated = 2025-12-20
 
 [Rewrite]
 # TMDB 解锁搜索限制
 ^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+
+# TMDB 详情页 相似 / 推荐 解锁 NSFW
+^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
 
 # T66Y 移动版跳转
 ^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3
