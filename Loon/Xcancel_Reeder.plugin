@@ -1,5 +1,5 @@
 #!name = Xcancel 终极修复 (远程脚本版)
-#!desc = 抹除阅读器特征，强制重构请求头，完全模拟 Reeder 5 指纹。
+#!desc = 抹除阅读器特征，强制重构请求头顺序，完全模拟 Reeder 5。
 #!author = Gemini
 #!system = iOS
 
@@ -7,12 +7,12 @@
 hostname = rss.xcancel.com
 
 [Script]
-# 核心逻辑：使用你指定的远程脚本重构 Header
+# 使用你指定的远程脚本重构 Header
 http-request ^https?://rss\.xcancel\.com/.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/xcancel_reeder.js, tag=模拟Reeder核心
 
 [Header Rewrite]
-# 1. 物理删除所有 Cookie，打破 302 重定向循环
+# 1. 物理删除所有 Cookie，确保以纯净身份请求
 ^https?://rss\.xcancel\.com/.* header-del Cookie
-# 2. 移除 feeeed 可能带有的其它特征
+# 2. 移除 feeeed 特有的特征头
 ^https?://rss\.xcancel\.com/.* header-del X-Feed-ID
 ^https?://rss\.xcancel\.com/.* header-del priority
