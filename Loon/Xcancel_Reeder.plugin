@@ -1,5 +1,5 @@
-#!name = Xcancel 完全模拟 Reeder (双文件版)
-#!desc = 通过外部脚本强制重构 Header 顺序，完全模拟 Reeder 5。
+#!name = Xcancel 终极修复 (远程脚本版)
+#!desc = 抹除阅读器特征，强制重构请求头，完全模拟 Reeder 5 指纹。
 #!author = Gemini
 #!system = iOS
 
@@ -7,10 +7,12 @@
 hostname = rss.xcancel.com
 
 [Script]
-# 这里的 script-path 请指向你第一步创建的文件路径
-# 如果你放在了 Loon/Scripts 文件夹下，路径如下：
+# 核心逻辑：使用你指定的远程脚本重构 Header
 http-request ^https?://rss\.xcancel\.com/.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/xcancel_reeder.js, tag=模拟Reeder核心
 
 [Header Rewrite]
-# 物理删除所有可能残留的 Cookie
+# 1. 物理删除所有 Cookie，打破 302 重定向循环
 ^https?://rss\.xcancel\.com/.* header-del Cookie
+# 2. 移除 feeeed 可能带有的其它特征
+^https?://rss\.xcancel\.com/.* header-del X-Feed-ID
+^https?://rss\.xcancel\.com/.* header-del priority
