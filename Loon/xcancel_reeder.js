@@ -1,6 +1,6 @@
 /**
- * 完全模拟 Reeder 5 (iOS) 的请求指纹
- * 抹除 feeeed 特有的所有 Header 字段
+ * Xcancel 核心伪装脚本
+ * 彻底重拍 Header 顺序并删除 feeeed 特征
  */
 
 const headers = {
@@ -12,5 +12,5 @@ const headers = {
     'Connection': 'keep-alive'
 };
 
-// 用上面这个精简的字典彻底覆盖原始请求头
+// 放弃所有原始 Header，只发送上面定义的 Reeder 字典
 $done({headers: headers});
