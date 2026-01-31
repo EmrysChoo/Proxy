@@ -1,5 +1,5 @@
-#!name = Xcancel 终极修复
-#!desc = 抹除阅读器特征，强制重构请求头顺序，完全模拟 Reeder 5。
+#!name = Xcancel 终极修复方案
+#!desc = 调用远程脚本模拟 Reeder，同时强制清除旧 Cookie 和 feeeed 指纹。
 #!author = Gemini
 #!system = iOS
 
@@ -7,12 +7,15 @@
 hostname = rss.xcancel.com
 
 [Script]
-# 使用你指定的远程脚本重构 Header
+# 1. 核心伪装：调用你的远程脚本重构 Header 顺序和内容
 http-request ^https?://rss\.xcancel\.com/.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/xcancel_reeder.js, tag=模拟Reeder核心
 
 [Header Rewrite]
-# 1. 物理删除所有 Cookie，确保以纯净身份请求
+# 2. 身份漂白 (关键)：物理删除所有 Cookie，防止服务器识别出你是刚才那个失败的用户
 ^https?://rss\.xcancel\.com/.* header-del Cookie
-# 2. 移除 feeeed 特有的特征头
-^https?://rss\.xcancel\.com/.* header-del X-Feed-ID
+
+# 3. 去除指纹：删除 feeeed 特有的 priority 字段 (Reeder 不会发送这个)
 ^https?://rss\.xcancel\.com/.* header-del priority
+
+# 4. 辅助清理：删除可能存在的 App 标识
+^https?://rss\.xcancel\.com/.* header-del X-Feed-ID
