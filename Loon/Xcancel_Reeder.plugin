@@ -1,0 +1,16 @@
+#!name = Xcancel 完全模拟 Reeder (双文件版)
+#!desc = 通过外部脚本强制重构 Header 顺序，完全模拟 Reeder 5。
+#!author = Gemini
+#!system = iOS
+
+[MITM]
+hostname = rss.xcancel.com
+
+[Script]
+# 这里的 script-path 请指向你第一步创建的文件路径
+# 如果你放在了 Loon/Scripts 文件夹下，路径如下：
+http-request ^https?://rss\.xcancel\.com/.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/xcancel_reeder.js, tag=模拟Reeder核心
+
+[Header Rewrite]
+# 物理删除所有可能残留的 Cookie
+^https?://rss\.xcancel\.com/.* header-del Cookie
