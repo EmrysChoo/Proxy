@@ -1,5 +1,5 @@
 #!name=TG RSS 媒体内嵌
-#!desc=在RSS阅读器中直接显示tg.i-c-a.su图片和视频（远程脚本版）
+#!desc=在RSS阅读器中直接显示tg.i-c-a.su图片和视频
 #!author=EmrysChoo
 #!system=ios
 
@@ -7,4 +7,4 @@
 hostname = tg.i-c-a.su
 
 [Script]
-tg_rss = type=http-response,pattern=^https?:\/\/tg\.i-c-a\.su\/rss\/.*,requires-body=1,max-size=0,timeout=60,script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js
+http-response,pattern=^https?:\/\/tg\.i-c-a\.su\/rss\/.*,requires-body=1,max-size=0,timeout=60,script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js
