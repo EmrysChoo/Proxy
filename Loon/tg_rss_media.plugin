@@ -1,11 +1,10 @@
-#!name=TG RSS 媒体内嵌（修复版）
-#!desc=RSS中直接显示tg.i-c-a.su图片和视频
-#!openUrl=https://github.com/EmrysChoo/Proxy
+#!name=TG RSS 媒体内嵌
+#!desc=在RSS阅读器中直接显示tg.i-c-a.su图片和视频
 #!author=EmrysChoo
 #!system=ios
 
 [Script]
-tg_rss_media_embed = type=http-response,pattern=^https?:\/\/.*,requires-body=1,max-size=0,timeout=60,script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js
+http-response ^https?:\/\/.* requires-body=1,timeout=60,max-size=0,script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js
 
 [MITM]
 hostname = tg.i-c-a.su
