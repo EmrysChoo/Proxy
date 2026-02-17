@@ -1,12 +1,9 @@
-#!name=TG RSS 媒体内嵌 (feeeed 优化)
-#!desc=将 tg.i-c-a.su 非标准 XML 转换为 feeeed 支持的标准 RSS 2.0，支持高清图与视频直接内嵌。
-#!author=EmrysChoo
-#!icon=https://raw.githubusercontent.com/luestr/IconCenter/master/Apps/Telegram.png
-#!date=2024-05-20
+#!name=TG RSS 媒体修复 (feeeed版)
+#!desc=修复 feeeed 详情页图片加载失败与视频无法播放的问题。
 
 [MITM]
 hostname = %APPEND% tg.i-c-a.su
 
 [Script]
-# 拦截并重写 guaidan21 的非标准响应
-http-response ^https?:\/\/tg\.i-c-a\.su\/rss\/guaidan21.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js, requires-body=true, tag=TG_RSS_Media_Fix, timeout=60
+# 脚本路径使用你提供的 GitHub 地址
+http-response ^https?:\/\/tg\.i-c-a\.su\/rss\/guaidan21.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js, requires-body=true, tag=TG_RSS_Fix
