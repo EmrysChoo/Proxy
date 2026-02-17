@@ -1,10 +1,12 @@
 #!name=TG RSS 媒体内嵌
-#!desc=在 RSS 阅读器中直接显示 tg.i-c-a.su 图片和视频
+#!desc=自动解析 tg.i-c-a.su 的媒体附件(Enclosure)，并在 RSS 阅读器中直接内嵌视频与图片，修复 HTML 转义污染。
 #!author=EmrysChoo
-#!system=ios
+#!icon=https://raw.githubusercontent.com/luestr/IconCenter/master/Apps/Telegram.png
+#!date=2024-05-20
 
 [MITM]
-hostname = tg.i-c-a.su
+hostname = %APPEND% tg.i-c-a.su
 
 [Script]
-http-response,pattern=^https?:\/\/tg\.i-c-a\.su\/rss\/.*,requires-body=1,max-size=0,timeout=60,script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js
+# 拦截响应并执行媒体重建脚本
+http-response ^https?:\/\/tg\.i-c-a\.su\/rss\/.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js, requires-body=true, tag=TG_RSS_Media_Fix, timeout=60
