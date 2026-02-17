@@ -1,9 +1,15 @@
-#!name=TG RSS 媒体修复 (feeeed版)
-#!desc=修复 feeeed 详情页图片加载失败与视频无法播放的问题。
+#!name=TG RSS 媒体增强
+#!desc=适配 feeeed，修复 tg.i-c-a.su 详情页裂图与视频内嵌。
+#!author=EmrysChoo
+#!icon=https://raw.githubusercontent.com/luestr/IconCenter/master/Apps/Telegram.png
 
 [MITM]
+# 规范：必须包含主机名
 hostname = %APPEND% tg.i-c-a.su
 
 [Script]
-# 脚本路径使用你提供的 GitHub 地址
-http-response ^https?:\/\/tg\.i-c-a\.su\/rss\/guaidan21.* script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js, requires-body=true, tag=TG_RSS_Fix
+# 规范化写法：
+# 1. 使用包含模式匹配所有子路径
+# 2. 必须开启 requires-body
+# 3. 增加 timeout 确保大 XML 处理不超时
+http-response ^https?:\/\/tg\.i-c\.a\.su\/rss\/ script-path=https://github.com/EmrysChoo/Proxy/raw/refs/heads/main/Loon/tg_rss_media_embed.js, requires-body=true, tag=TG_RSS_Media_Embed, timeout=60
