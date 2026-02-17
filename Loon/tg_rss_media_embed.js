@@ -1,72 +1,49 @@
 /*
- * TG RSS 强转标准版 (含图片高清修复)
- * 适配：feeeed, Lire, Reeder
+ * TG RSS 修复脚本 (适配 feeeed)
+ * 功能：将转义的 HTML 还原，确保详情页媒体正常渲染
  */
 
 let body = $response.body;
-if (!body) $done({});
+
+if (!body || body.indexOf("<item>") === -1) {
+    $done({});
+}
 
 try {
-    // 1. 分割内容块 (以 t.me 链接作为每个条目的锚点)
-    const blocks = body.split(/(?=https:\/\/t\.me\/guaidan21\/\d+)/g);
-    let rssItems = [];
-
-    blocks.forEach(block => {
-        // 提取标题并过滤掉 HTML
-        let titleMatch = block.match(/^([\s\S]*?)(?=Sun,|Mon,|Tue,|Wed,|Thu,|Fri,|Sat,)/);
-        let title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").trim() : "";
+    // 1. 局部处理 item 块，防止破坏顶层 hostname
+    body = body.replace(/<item>([\s\S]*?)<\/item>/g, (itemBlock) => {
         
-        // 核心：提取媒体链接 (href 指向的是原图或原视频)
-        const mediaMatch = block.match(/<a href="([^"]+)"/i);
-        let mediaTag = "";
-        
-        if (mediaMatch) {
-            const mediaUrl = mediaMatch[1];
-            const isVideo = mediaUrl.match(/\.(mp4|mov|m4v)$/i);
-            const isImage = mediaUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+        // 2. 提取并还原 description 内容
+        return itemBlock.replace(/<description>([\s\S]*?)<\/description>/i, (m, desc) => {
+            // 还原转义字符：&lt; -> < , &gt; -> > , &amp; -> &
+            let decodedDesc = desc
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">")
+                .replace(/&amp;/g, "&")
+                .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1"); // 剥离旧的 CDATA
 
-            if (isVideo) {
-                // 视频：增加封面图和自动播放属性
-                mediaTag = `<video controls preload="metadata" playsinline style="width:100%;border-radius:12px;"><source src="${mediaUrl}"></video><br>`;
-            } else if (isImage) {
-                // 图片：直接内嵌原图而非缩略图
-                mediaTag = `<img src="${mediaUrl}" style="width:100%;border-radius:12px;" referrerpolicy="no-referrer"><br>`;
+            // 3. 针对视频进行 HTML5 兼容性处理
+            // 原始链接通常在 <a> 标签里，我们把它提取出来直接写成 <video> 或 <img>
+            const mediaMatch = decodedDesc.match(/<a href="([^"]+)"/i);
+            let mediaTag = "";
+            if (mediaMatch) {
+                const url = mediaMatch[1];
+                if (url.match(/\.(mp4|mov|m4v)/i)) {
+                    mediaTag = `<video controls playsinline preload="metadata" style="width:100%;border-radius:8px;"><source src="${url}"></video><br>`;
+                } else if (url.match(/\.(jpg|jpeg|png|gif|webp)/i)) {
+                    mediaTag = `<img src="${url}" style="width:100%;border-radius:8px;"><br>`;
+                }
             }
-        }
 
-        // 提取日期和原始链接
-        const dateMatch = block.match(/(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat),[\s\S]*?\+0300/);
-        const linkMatch = block.match(/https:\/\/t\.me\/guaidan21\/\d+/);
-        
-        if (linkMatch) {
-            rssItems.push(`
-            <item>
-                <title><![CDATA[${title || "新消息"}]]></title>
-                <link>${linkMatch[0]}</link>
-                <guid>${linkMatch[0]}</guid>
-                <pubDate>${dateMatch ? dateMatch[0] : ""}</pubDate>
-                <description><![CDATA[${mediaTag}<div style="margin-top:10px;">${title}</div>]]></description>
-            </item>`);
-        }
+            // 4. 重构：让 feeeed 识别到这是纯正的 HTML
+            // 移除原始那个带 a 标签的预览图，换成我们的 mediaTag
+            let finalText = decodedDesc.replace(/<a[\s\S]*?<\/a>/, "").trim();
+            
+            return `<description><![CDATA[${mediaTag}${finalText}]]></description>`;
+        });
     });
 
-    // 2. 构建标准 RSS 2.0 容器
-    const finalXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-<channel>
-    <title>目睹21世纪之怪诞</title>
-    <link>https://t.me/s/guaidan21</link>
-    <description>Converted for feeeed with HD Media</description>
-    ${rssItems.join("")}
-</channel>
-</rss>`;
-
-    $done({ 
-        body: finalXml, 
-        headers: { "Content-Type": "application/xml; charset=utf-8" } 
-    });
-
+    $done({ body });
 } catch (e) {
-    console.log("TG_Convert_Error: " + e);
     $done({});
 }
