@@ -7,10 +7,10 @@
 #!arguments=
 
 [MITM]
-hostname = ai.puter,api.puter.com,puter.com
+hostname = ai.puter.com, api.puter.com
 
 [Rewrite]
-^https:\/\/ai\.puter\/v1\/ url script-request-body puter_grok
+^https:\/\/ai\.puter\.com\/v1\/chat\/completions script-request-body puter_grok
 
 [Script]
-puter_grok = type=http-request,pattern=^https:\/\/ai\.puter\/v1\/,requires-body=1,max-size=0,timeout=60,script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/puter_grok.js
+puter_grok = type=http-request,pattern=^https:\/\/ai\.puter\.com\/v1\/chat\/completions,requires-body=1,max-size=0,timeout=60,script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/puter_grok.js
