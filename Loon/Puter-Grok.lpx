@@ -1,13 +1,16 @@
 #!name=Puter Grok Auto Gateway
-#!desc=Auto Login + Session Detection
-#!author=YourName
-#!homepage=https://github.com/YOURNAME/loon-puter-grok
+#!desc=OpenAI Compatible Grok Gateway via Puter
+#!author=EmrysChoo
+#!homepage=https://github.com/EmrysChoo/Proxy
+#!icon=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/icon.png
+#!openUrl=https://github.com/EmrysChoo/Proxy
+#!arguments=
 
 [MITM]
-hostname = ai.puter, api.puter.com, puter.com
+hostname = ai.puter,api.puter.com,puter.com
 
 [Rewrite]
-^https:\/\/ai\.puter\/v1\/ url script-request-header puter_grok
+^https:\/\/ai\.puter\/v1\/ url script-request-body puter_grok
 
 [Script]
 puter_grok = type=http-request,pattern=^https:\/\/ai\.puter\/v1\/,requires-body=1,max-size=0,timeout=60,script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/puter_grok.js
