@@ -1,13 +1,10 @@
 #!name=Puter Grok Auto Gateway
 #!desc=OpenAI Compatible Grok Gateway via Puter
-#!author=EmrysChoo
-#!homepage=https://github.com/EmrysChoo/Proxy
-#!icon=https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Loon/icon.png
-#!openUrl=https://github.com/EmrysChoo/Proxy
-#!arguments=
+#!author=Shayon
+#!version=1.0.0
 
 [MITM]
-hostname = ai.puter.com, api.puter.com
+hostname = ai.puter.com
 
 [Rewrite]
 ^https:\/\/ai\.puter\.com\/v1\/chat\/completions script-request-body puter_grok
