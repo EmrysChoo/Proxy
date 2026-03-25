@@ -2,7 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 try {
-  const widgetsDir = "Forward/JS";
+  const widgetsDir = path.join(__dirname, "JS");
+  const files = fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"));
+
+  console.log("找到的文件:", files);
 
   function extractMeta(filePath) {
     const content = fs.readFileSync(filePath, "utf-8");
@@ -17,8 +20,6 @@ try {
 
     return meta;
   }
-
-  const files = fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"));
 
   const widgets = files.map(file => {
     const meta = extractMeta(path.join(widgetsDir, file));
@@ -35,8 +36,9 @@ try {
     widgets
   };
 
-  fs.writeFileSync("Forward/forward.fwd", JSON.stringify(fwd, null, 2));
-  console.log("✅ forward.fwd 已生成，包含", widgets.length, "个 widgets");
+  const outputPath = path.join(__dirname, "forward.fwd");
+  fs.writeFileSync(outputPath, JSON.stringify(fwd, null, 2));
+  console.log("✅ forward.fwd 已生成:", outputPath);
 } catch (err) {
   console.error("❌ 脚本执行失败：", err.message);
   console.error(err.stack);
