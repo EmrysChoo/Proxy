@@ -20,7 +20,7 @@ const widgets = files.map(file => {
     requiredVersion: "0.0.1",
     version: "0.0.1",
     author: "unknown",
-    url: `https://raw.githubusercontent.com/<你的GitHub用户名>/<你的仓库名>/refs/heads/main/Forward/JS/${file}`
+    url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`
   };
 });
 
