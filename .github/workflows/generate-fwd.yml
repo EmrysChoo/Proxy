@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'   # 建议直接用 Node.js 24，避免未来弃用警告
 
       - name: Debug repo structure
         run: |
@@ -24,6 +24,9 @@ jobs:
 
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
+
+      - name: Show Forward directory
+        run: ls -R Forward
 
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
