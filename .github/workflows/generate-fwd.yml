@@ -20,9 +20,6 @@ jobs:
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
 
-      - name: Show Forward directory
-        run: ls -R Forward
-
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
 
