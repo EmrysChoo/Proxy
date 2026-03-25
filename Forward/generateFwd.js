@@ -12,7 +12,7 @@ function extractMeta(filePath) {
   const content = fs.readFileSync(filePath, "utf-8");
   const meta = {};
 
-  // 只匹配 WidgetMetadata 对象里的字段
+  // 专门匹配 WidgetMetadata 对象里的字段
   meta.id = (content.match(/WidgetMetadata\s*=\s*{[^}]*id:\s*["'](.+?)["']/) || [])[1] || path.basename(filePath, ".js");
   meta.title = (content.match(/WidgetMetadata\s*=\s*{[^}]*title:\s*["'](.+?)["']/) || [])[1] || meta.id;
   meta.description = (content.match(/WidgetMetadata\s*=\s*{[^}]*description:\s*["'](.+?)["']/) || [])[1] || "";
@@ -21,6 +21,7 @@ function extractMeta(filePath) {
   meta.author = (content.match(/WidgetMetadata\s*=\s*{[^}]*author:\s*["'](.+?)["']/) || [])[1] || "unknown";
   meta.site = (content.match(/WidgetMetadata\s*=\s*{[^}]*site:\s*["'](.+?)["']/) || [])[1] || "";
 
+  // 如果需要解析 modules，可以用更复杂的正则或 AST，这里先留空
   return meta;
 }
 
