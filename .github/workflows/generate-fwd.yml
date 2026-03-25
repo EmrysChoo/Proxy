@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:   # 手动触发也可以
 
 jobs:
   build:
@@ -15,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '24'   # 建议直接用 Node.js 24，避免未来弃用警告
 
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
