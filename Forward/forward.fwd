@@ -4,9 +4,9 @@
   "icon": "https://via.placeholder.com/64",
   "widgets": [
     {
-      "id": "91porn.list",
-      "title": "最近加精",
-      "description": "分类",
+      "id": "91porn_int",
+      "title": "91Porn",
+      "description": "91Porn",
       "version": "0.9.6",
       "requiredVersion": "0.0.1",
       "author": "網路",
@@ -14,7 +14,7 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porn_int.js"
     },
     {
-      "id": "91porny.video",
+      "id": "91porny_int",
       "title": "91Porny",
       "description": "91Porny",
       "version": "0.9.6",
@@ -25,8 +25,8 @@
     },
     {
       "id": "jable_int",
-      "title": "\\u5173\\u952e\\u8bcd",
-      "description": "\\u5173\\u952e\\u8bcd",
+      "title": "Jable",
+      "description": "修复声音&恢复大量分类",
       "version": "1.3.0",
       "requiredVersion": "0.0.2",
       "author": "nibiru｜MakkaPakka｜蝴蝶",
@@ -35,8 +35,8 @@
     },
     {
       "id": "javday_int",
-      "title": "女優/番號/關鍵字搜索…",
-      "description": "女優/番號/關鍵字搜索…",
+      "title": "JAVDay",
+      "description": "網路收集到的模塊",
       "version": "1.2.0",
       "requiredVersion": "0.0.1",
       "author": "Ti",
@@ -45,8 +45,8 @@
     },
     {
       "id": "javday_pro_final_mak",
-      "title": "女優/番號/關鍵字搜索…",
-      "description": "女優/番號/關鍵字搜索…",
+      "title": "JAVDay_ovo",
+      "description": "简易的javday模块",
       "version": "1.0.2",
       "requiredVersion": "0.0.1",
       "author": "𝙈𝙖𝙠𝙠𝙖𝙋𝙖𝙠𝙠𝙖",
@@ -55,7 +55,7 @@
     },
     {
       "id": "missav_makka_play",
-      "title": "页码",
+      "title": "MissAV_ovo",
       "description": "简易的missav模块",
       "version": "2.1.1",
       "requiredVersion": "0.0.1",
@@ -64,9 +64,9 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/missavovo.js"
     },
     {
-      "id": "searchKeyword",
-      "title": "搜索关键词",
-      "description": "请输入要搜索的关键词",
+      "id": "Pornhub_int",
+      "title": "Pornhub",
+      "description": "網路收集到的模塊",
       "version": "1.1.5",
       "requiredVersion": "0.0.1",
       "author": "海带",
@@ -74,9 +74,9 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/pornhub_int.js"
     },
     {
-      "id": "xvideos.new",
-      "title": "页码",
-      "description": "XVideos 最新视频",
+      "id": "xvideos_int",
+      "title": "XVideos",
+      "description": "網路收集到的模塊",
       "version": "0.9.6",
       "requiredVersion": "0.0.1",
       "author": "網路",
