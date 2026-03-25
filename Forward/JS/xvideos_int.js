@@ -1669,3 +1669,4 @@ async function loadDetail(url) {
     }
 }
 ;
+
