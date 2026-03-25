@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:   # 支持手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,6 +21,9 @@ jobs:
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
 
+      - name: Show Forward directory
+        run: ls -R Forward
+
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
 
@@ -33,7 +36,7 @@ jobs:
           if ! git diff --quiet Forward/forward.fwd; then
             git add Forward/forward.fwd
             git commit -m "chore: auto-update forward.fwd"
-            git push
+            git push origin HEAD:main
           else
             echo "✅ forward.fwd 没有变化，跳过提交"
           fi
