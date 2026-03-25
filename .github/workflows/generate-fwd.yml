@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:   # 支持手动触发
 
 jobs:
   build:
@@ -21,8 +21,8 @@ jobs:
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
 
-      - name: Show Forward directory
-        run: ls -R Forward
+      - name: Debug Forward directory
+        run: ls -R Forward || echo "Forward 目录不存在"
 
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
@@ -33,10 +33,14 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet Forward/forward.fwd; then
-            git add Forward/forward.fwd
-            git commit -m "chore: auto-update forward.fwd"
-            git push origin HEAD:main
+          if [ -f Forward/forward.fwd ]; then
+            if ! git diff --quiet Forward/forward.fwd; then
+              git add Forward/forward.fwd
+              git commit -m "chore: auto-update forward.fwd"
+              git push origin HEAD:main
+            else
+              echo "✅ forward.fwd 没有变化，跳过提交"
+            fi
           else
-            echo "✅ forward.fwd 没有变化，跳过提交"
+            echo "❌ forward.fwd 文件不存在，无法提交"
           fi
