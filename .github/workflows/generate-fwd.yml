@@ -15,12 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'   # 建议直接用 Node.js 24，避免未来弃用警告
-
-      - name: Debug repo structure
-        run: |
-          pwd
-          ls -R
+          node-version: '24'
 
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
@@ -30,3 +25,15 @@ jobs:
 
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
+
+      - name: Commit and push updated forward.fwd if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet Forward/forward.fwd; then
+            git add Forward/forward.fwd
+            git commit -m "chore: auto-update forward.fwd"
+            git push
+          else
+            echo "✅ forward.fwd 没有变化，跳过提交"
+          fi
