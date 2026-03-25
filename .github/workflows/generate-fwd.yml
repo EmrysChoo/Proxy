@@ -17,13 +17,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Debug file structure
+      - name: Debug repo structure
         run: |
           pwd
-          ls -R Proxy/Forward
+          ls -R
 
       - name: Run generateFwd.js
-        run: node Proxy/Forward/generateFwd.js
+        run: node Forward/generateFwd.js
 
       - name: Show forward.fwd content
-        run: cat Proxy/Forward/forward.fwd || echo "forward.fwd 未生成"
+        run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
