@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:   # 手动触发也可以
+  workflow_dispatch:   # 支持手动触发
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'   # 建议直接用 Node.js 24，避免未来弃用警告
+          node-version: '24'
 
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
@@ -25,6 +25,8 @@ jobs:
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
 
       - name: Commit and push updated forward.fwd if changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
