@@ -1,0 +1,79 @@
+{
+  "title": "My Widgets",
+  "description": "Made by Love",
+  "icon": "https://via.placeholder.com/64",
+  "widgets": [
+    {
+      "id": "91porn_int",
+      "title": "91porn_int",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porn_int.js"
+    },
+    {
+      "id": "91porny_int",
+      "title": "91porny_int",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porny_int.js"
+    },
+    {
+      "id": "jable",
+      "title": "jable",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/jable.js"
+    },
+    {
+      "id": "javday_int",
+      "title": "javday_int",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/javday_int.js"
+    },
+    {
+      "id": "javdayovo",
+      "title": "javdayovo",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/javdayovo.js"
+    },
+    {
+      "id": "missavovo",
+      "title": "missavovo",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/missavovo.js"
+    },
+    {
+      "id": "pornhub_int",
+      "title": "pornhub_int",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/pornhub_int.js"
+    },
+    {
+      "id": "xvideos_int",
+      "title": "xvideos_int",
+      "description": "",
+      "requiredVersion": "0.0.1",
+      "version": "0.0.1",
+      "author": "unknown",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/xvideos_int.js"
+    }
+  ]
+}
