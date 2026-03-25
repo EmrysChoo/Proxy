@@ -1,39 +1,44 @@
 const fs = require("fs");
 const path = require("path");
 
-// 目标目录：Forward/JS
 const widgetsDir = path.join(__dirname, "JS");
-
-// 读取所有 .js 文件
 const files = fs.existsSync(widgetsDir)
   ? fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"))
   : [];
 
 console.log("找到的文件:", files);
 
-// 构建 widgets 数组
+function extractMeta(filePath) {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const meta = {};
+
+  // 只匹配 WidgetMetadata 对象里的字段
+  meta.id = (content.match(/WidgetMetadata\s*=\s*{[^}]*id:\s*["'](.+?)["']/) || [])[1] || path.basename(filePath, ".js");
+  meta.title = (content.match(/WidgetMetadata\s*=\s*{[^}]*title:\s*["'](.+?)["']/) || [])[1] || meta.id;
+  meta.description = (content.match(/WidgetMetadata\s*=\s*{[^}]*description:\s*["'](.+?)["']/) || [])[1] || "";
+  meta.version = (content.match(/WidgetMetadata\s*=\s*{[^}]*version:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
+  meta.requiredVersion = (content.match(/WidgetMetadata\s*=\s*{[^}]*requiredVersion:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
+  meta.author = (content.match(/WidgetMetadata\s*=\s*{[^}]*author:\s*["'](.+?)["']/) || [])[1] || "unknown";
+  meta.site = (content.match(/WidgetMetadata\s*=\s*{[^}]*site:\s*["'](.+?)["']/) || [])[1] || "";
+
+  return meta;
+}
+
 const widgets = files.map(file => {
+  const meta = extractMeta(path.join(widgetsDir, file));
   return {
-    id: path.basename(file, ".js"),
-    title: path.basename(file, ".js"),
-    description: "",
-    requiredVersion: "0.0.1",
-    version: "0.0.1",
-    author: "unknown",
+    ...meta,
     url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`
   };
 });
 
-// 构建最终 fwd 对象
 const fwd = {
   title: "My Widgets",
   description: "Made by Love",
-  // 没有 icon.png 就用占位符，或者直接删掉这一行
   icon: "https://via.placeholder.com/64",
   widgets
 };
 
-// 输出路径：Forward/forward.fwd
 const outputPath = path.join(__dirname, "forward.fwd");
 fs.writeFileSync(outputPath, JSON.stringify(fwd, null, 2));
 console.log("✅ forward.fwd 已生成:", outputPath);
