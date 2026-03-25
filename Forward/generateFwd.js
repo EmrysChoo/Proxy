@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
 
 const widgetsDir = "Proxy/Forward/JS";
 
@@ -30,7 +30,7 @@ const widgets = files.map(file => {
 });
 
 const fwd = {
-  title: "Evan's Widgets",
+  title: "Ti's Widgets",
   description: "Made by Love",
   icon: "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/icon.png",
   widgets
