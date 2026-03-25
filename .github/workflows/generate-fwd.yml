@@ -2,8 +2,8 @@ name: Generate FWD
 
 on:
   push:
-    paths:
-      - 'Proxy/Forward/JS/*.js'   # 当 JS 文件有改动时触发
+    branches:
+      - main   # 只要 push 到 main 分支就运行
 
 jobs:
   build:
