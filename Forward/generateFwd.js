@@ -2,9 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 try {
-  const widgetsDir = "Proxy/Forward/JS";
+  const widgetsDir = "Forward/JS";
 
-  // 提取函数：用正则匹配 JS 文件里的字段
   function extractMeta(filePath) {
     const content = fs.readFileSync(filePath, "utf-8");
     const meta = {};
@@ -19,7 +18,6 @@ try {
     return meta;
   }
 
-  // 遍历 JS 目录下所有 js 文件
   const files = fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"));
 
   const widgets = files.map(file => {
@@ -37,7 +35,7 @@ try {
     widgets
   };
 
-  fs.writeFileSync("Proxy/Forward/forward.fwd", JSON.stringify(fwd, null, 2));
+  fs.writeFileSync("Forward/forward.fwd", JSON.stringify(fwd, null, 2));
   console.log("✅ forward.fwd 已生成，包含", widgets.length, "个 widgets");
 } catch (err) {
   console.error("❌ 脚本执行失败：", err.message);
