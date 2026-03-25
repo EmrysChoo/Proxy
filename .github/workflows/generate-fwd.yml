@@ -27,20 +27,12 @@ jobs:
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
 
-      - name: Commit and push updated forward.fwd if changed
+      - name: Commit and push forward.fwd (force add)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f Forward/forward.fwd ]; then
-            if ! git diff --quiet Forward/forward.fwd; then
-              git add Forward/forward.fwd
-              git commit -m "chore: auto-update forward.fwd"
-              git push origin HEAD:main
-            else
-              echo "✅ forward.fwd 没有变化，跳过提交"
-            fi
-          else
-            echo "❌ forward.fwd 文件不存在，无法提交"
-          fi
+          git add -A Forward/forward.fwd
+          git commit -m "chore: add/update forward.fwd" || echo "⚠️ 没有变化，跳过 commit"
+          git push origin HEAD:main
