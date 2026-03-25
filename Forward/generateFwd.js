@@ -46,9 +46,9 @@ const widgets = files.map(file => {
 });
 
 const fwd = {
-  title: "My Widgets",
+  title: "自用模块",
   description: "Made by Love",
-  icon: "https://via.placeholder.com/64",
+  icon: "https://assets.vvebo.vip/scripts/icon.png",
   widgets
 };
 
