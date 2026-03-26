@@ -3,7 +3,7 @@ var WidgetMetadata = {
     title: "Hanime1修复",
     description: "获取 Hanime1 动画，折扣码haze",
     author: "skywazzle",
-    site: "https://hanime1.me",
+    site: "https://hanime.tv",
     version: "2.4.0", // 版本升级
     requiredVersion: "0.0.2",
     detailCacheDuration: 300,
@@ -172,7 +172,7 @@ var WidgetMetadata = {
     ]
 };
 
-const BASE_URL = "https://hanime1.me";
+const BASE_URL = "https://hanime.tv";
 const REQUEST_TIMEOUT = 10000; // 10秒超时
 
 function getCommonHeaders() {
