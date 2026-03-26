@@ -24,6 +24,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porny_int.js"
     },
     {
+      "id": "hanimel_me_style",
+      "title": "Hanime1修复",
+      "description": "获取 Hanime1 动画，折扣码haze",
+      "version": "2.4.0",
+      "requiredVersion": "0.0.2",
+      "author": "skywazzle",
+      "site": "https://hanime1.me",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/Hanime1修复.js"
+    },
+    {
       "id": "jable_int",
       "title": "Jable",
       "description": "修复声音&恢复大量分类",
