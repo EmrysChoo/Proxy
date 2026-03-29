@@ -24,6 +24,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porny_int.js"
     },
     {
+      "id": "hanime1_me_taoyhu_v4_4",
+      "title": "Hanime1",
+      "description": "把hanime1装进口袋",
+      "version": "4.4.1",
+      "requiredVersion": "0.0.2",
+      "author": "网络/TaYhu",
+      "site": "https://hanime1.me",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/Hanime1_fw.js"
+    },
+    {
       "id": "jable_int",
       "title": "Jable",
       "description": "修复声音&恢复大量分类",
