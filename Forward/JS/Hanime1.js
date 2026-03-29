@@ -92,7 +92,7 @@ WidgetMetadata = {
   description: "获取 Hanime1 动画，折扣码HAZE",
   author: "skywazzle",
   site: "https://hanime1.me",
-  version: "6.2.0",
+  version: "6.2.1",   // 微调版本号
   requiredVersion: "0.0.2",
   detailCacheDuration: 300,
   // 顶级搜索模块（全局搜索入口）
@@ -264,7 +264,6 @@ async function fetchAndParseSearch(url) {
     console.log("页面标题:", $('title').text());
 
     const items = [];
-    // 搜索结果可能使用不同的容器类，尝试多种常见选择器
     const selectors = ['.search-item', '.search-result', '.video-item', 'a[href*="/watch?v="]'];
     let $containers = $();
     for (const sel of selectors) {
@@ -276,7 +275,6 @@ async function fetchAndParseSearch(url) {
     }
 
     $containers.each((i, el) => {
-      // 确保我们操作的是 <a> 标签，如果不是则找内部的 <a>
       const $a = $(el).is('a') ? $(el) : $(el).find('a[href*="/watch?v="]').first();
       const href = $a.attr('href');
       if (!href) return;
@@ -284,21 +282,17 @@ async function fetchAndParseSearch(url) {
       let link = href.startsWith('http') ? href : DEFAULT_BASE_URL + (href.startsWith('/') ? '' : '/') + href;
       if (items.some(it => it.link === link)) return;
 
-      // 图片提取（针对搜索页优化）
       let poster = "";
-      // 1. 从当前元素内的 <img> 提取
       const $img = $(el).find('img').first();
       if ($img.length) {
         poster = $img.attr('data-src') || $img.attr('src') || $img.attr('data-original') || "";
       }
-      // 2. 如果没找到，尝试从父级或兄弟找缩略图
       if (!poster) {
         const $parentImg = $(el).closest('div').find('img.thumbnail, img.cover').first();
         if ($parentImg.length) {
           poster = $parentImg.attr('data-src') || $parentImg.attr('src') || "";
         }
       }
-      // 3. 尝试背景图
       if (!poster) {
         const bgDiv = $(el).find('.img, .thumb, .cover').first();
         const bgStyle = bgDiv.attr('style');
@@ -309,7 +303,6 @@ async function fetchAndParseSearch(url) {
       }
       poster = _normalizeImageUrl(poster);
 
-      // 标题提取
       let title = $(el).find('.title, .name, .video-title, [class*="title"]').first().text().trim();
       if (!title) title = $img.attr('alt') || $a.attr('title') || "";
       if (!title) {
@@ -462,57 +455,97 @@ async function loadPreviews(params) {
   }
 }
 
-// ==================== 详情加载 ====================
+// ==================== 详情加载（已加强视频源提取） ====================
 async function loadDetail(link) {
   try {
+    console.log("正在加载详情页面:", link);
     const $ = await _api.getHtml(link);
 
     let videoUrl = "";
-    const qualityIds = ['#video-sd', '#video-hd', '#video-720p', '#video-1080p'];
+
+    // 1. 传统 input / source 标签
+    const qualityIds = ['#video-sd', '#video-hd', '#video-720p', '#video-1080p', '#video-source'];
     for (const id of qualityIds) {
-      const val = $(id).val();
-      if (val) { videoUrl = val; break; }
+      let val = $(id).val() || $(id).attr('src') || $(id).attr('data-src');
+      if (val && (val.includes('.m3u8') || val.includes('.mp4'))) {
+        videoUrl = val;
+        console.log("从 input/source 找到视频:", videoUrl);
+        break;
+      }
+    }
+
+    // 2. 增强 m3u8 提取（推荐优先使用）
+    if (!videoUrl) {
+      const m3u8Regex = /(https?:\/\/[^\s'"]+\.m3u8[^'"\s]*)/gi;
+      const matches = $.html().match(m3u8Regex);
+      if (matches && matches.length > 0) {
+        videoUrl = matches[matches.length - 1];  // 通常最后一个质量较高
+        console.log("从页面 HTML 提取到 m3u8:", videoUrl);
+      }
+    }
+
+    // 3. 更宽松的视频源正则
+    if (!videoUrl) {
+      const sourceRegex = /["'](https?:\/\/[^"']+\.(mp4|m3u8)[^"']*)["']/gi;
+      const sourceMatches = $.html().match(sourceRegex);
+      if (sourceMatches && sourceMatches.length > 0) {
+        videoUrl = sourceMatches[0].replace(/["']/g, '');
+        console.log("从宽松正则找到视频地址:", videoUrl);
+      }
+    }
+
+    // 4. 常见 JS 变量匹配
+    if (!videoUrl) {
+      const jsPatterns = [
+        /sources?\s*[:=]\s*\[?\s*["']([^"']+\.m3u8[^"']*)["']/i,
+        /file\s*[:=]\s*["']([^"']+\.(mp4|m3u8)[^"']*)["']/i,
+        /videoUrl\s*[:=]\s*["']([^"']+)["']/i,
+        /player\.src\s*[:=]\s*["']([^"']+)["']/i
+      ];
+      for (const pattern of jsPatterns) {
+        const match = $.html().match(pattern);
+        if (match && match[1]) {
+          videoUrl = match[1];
+          console.log("从 JS 变量中找到:", videoUrl);
+          break;
+        }
+      }
     }
 
     if (!videoUrl) {
-      const match = $.html().match(/source\s*=\s*['"](https:\/\/[^'"]+)['"]/);
-      if (match) videoUrl = match[1];
+      console.log("未能提取到直接视频地址，使用原页面作为降级方案");
+      videoUrl = link;
+    } else {
+      videoUrl = videoUrl.replace(/&amp;/g, '&');
     }
-    if (!videoUrl) videoUrl = $('video source').attr('src');
-    if (!videoUrl) throw new Error("video_url_not_found");
 
-    videoUrl = videoUrl.replace(/&amp;/g, '&');
-
-    const title = $('meta[property="og:title"]').attr('content') || "标题未知";
+    // 提取标题、描述、封面
+    const title = $('meta[property="og:title"]').attr('content') || $('title').text().trim() || "未知标题";
     const desc = $('meta[property="og:description"]').attr('content') || "";
     const cover = $('meta[property="og:image"]').attr('content') || "";
 
+    // 推荐视频（限制数量）
     const childItems = [];
-    $('.home-rows-videos-div a[href*="/watch?v="]').each((i, el) => {
-      if (i >= 10) return false;
+    $('.home-rows-videos-div a[href*="/watch?v="]').slice(0, 10).each((i, el) => {
       const $a = $(el);
       let recLink = $a.attr('href');
-      if (!recLink) return;
       if (!recLink.startsWith('http')) {
         recLink = DEFAULT_BASE_URL + (recLink.startsWith('/') ? '' : '/') + recLink;
       }
-
       const $img = $a.find('img').first();
-      let recPoster = $img.attr('data-src') || $img.attr('src') || "";
-      recPoster = _normalizeImageUrl(recPoster);
-
-      let recTitle = $a.find('.home-rows-videos-title, [class*="title"]').first().text().trim();
-      if (!recTitle) recTitle = $img.attr('alt') || "相关视频";
+      let recPoster = _normalizeImageUrl($img.attr('data-src') || $img.attr('src') || "");
 
       childItems.push({
         id: recLink,
         type: "url",
-        title: recTitle,
+        title: $a.find('.home-rows-videos-title, [class*="title"]').first().text().trim() || "相关视频",
         backdropPath: recPoster,
         mediaType: "movie",
         link: recLink
       });
     });
+
+    console.log("loadDetail 完成，最终 videoUrl:", videoUrl ? "已获取" : "未获取");
 
     return {
       id: link,
@@ -525,18 +558,15 @@ async function loadDetail(link) {
       link,
       childItems
     };
+
   } catch (error) {
     console.error("详情加载失败:", error);
-    let errorMsg = "无法加载视频，请重试。";
-    if (error.message === "video_url_not_found") {
-      errorMsg = "未找到视频地址，可能需登录或该视频已失效。";
-    }
     return {
       id: link,
       type: "detail",
       videoUrl: link,
       title: "加载失败",
-      description: errorMsg,
+      description: "无法提取视频地址，可能需要刷新或检查网络。",
       backdropPath: "",
       mediaType: "movie",
       link
