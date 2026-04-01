@@ -34,6 +34,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/Hanime1_fw.js"
     },
     {
+      "id": "VOD_STREAM",
+      "title": "VOD STREAM",
+      "description": "获取聚合VOD影视资源，智能分组，连接质量排序",
+      "version": "2.4.5",
+      "requiredVersion": "0.0.1",
+      "author": "MoYan",
+      "site": "无",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/MOYAN STREAM.js"
+    },
+    {
       "id": "Bitch",
       "title": "Bitch Lives",
       "description": "Bitch Lives",
@@ -42,6 +52,16 @@
       "author": "Discount Code：VEUS",
       "site": "Discount Code：VEUS",
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/NSFW-LIVE.js"
+    },
+    {
+      "id": "TV_LIVE_AUTO",
+      "title": "电视台",
+      "description": "获取热门电视直播频道（智能识别 M3U/TXT/JSON，自动分类，图标缩放，自动请求头）",
+      "version": "2.5.0",
+      "requiredVersion": "0.0.1",
+      "author": "MoYan & 两块",
+      "site": "",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/TV LIVE.js"
     },
     {
       "id": "jable_int",
