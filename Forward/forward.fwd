@@ -94,16 +94,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/javdayovo.js"
     },
     {
-      "id": "missav_makka_play",
-      "title": "MissAV_ovo",
-      "description": "简易的missav模块",
-      "version": "2.1.1",
-      "requiredVersion": "0.0.1",
-      "author": "𝙈𝙖𝙠𝙠𝙖𝙋𝙖𝙠𝙠𝙖",
-      "site": "https://missav.ai",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/missavovo.js"
-    },
-    {
       "id": "Pornhub_int",
       "title": "Pornhub",
       "description": "網路收集到的模塊",
