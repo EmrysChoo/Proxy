@@ -115,7 +115,7 @@
     },
     {
       "id": "forward.meta.subtitlecat",
-      "title": "SubtitleCat 字幕",
+      "title": "SubtitleCat字幕",
       "description": "从 subtitlecat.com 搜索并加载中文字幕。",
       "version": "1.1.0",
       "requiredVersion": "0.0.1",
