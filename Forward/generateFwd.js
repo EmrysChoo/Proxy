@@ -62,35 +62,34 @@ function extractWidgetBlock(content) {
  
 function extractMeta(filePath) {
   const content = fs.readFileSync(filePath, "utf-8");
-  const meta = {};
  
   const block = extractWidgetBlock(content);
   if (block) {
-    meta.id = (block.match(/id:\s*["'](.+?)["']/) || [])[1] || path.basename(filePath, ".js");
-    meta.title = (block.match(/title:\s*["'](.+?)["']/) || [])[1] || meta.id;
-    meta.description = (block.match(/description:\s*["'](.+?)["']/) || [])[1] || "";
-    meta.version = (block.match(/version:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
-    meta.requiredVersion = (block.match(/requiredVersion:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
-    meta.author = (block.match(/author:\s*["'](.+?)["']/) || [])[1] || "unknown";
-    meta.site = (block.match(/site:\s*["'](.+?)["']/) || [])[1] || "";
-  } else {
-    // 没有 WidgetMetadata 就用默认值
-    meta.id = path.basename(filePath, ".js");
-    meta.title = meta.id;
-    meta.description = "";
-    meta.version = "0.0.1";
-    meta.requiredVersion = "0.0.1";
-    meta.author = "unknown";
-    meta.site = "";
+    return {
+      id: (block.match(/id:\s*["'](.+?)["']/) || [])[1] || path.basename(filePath, ".js"),
+      title: (block.match(/title:\s*["'](.+?)["']/) || [])[1] || path.basename(filePath, ".js"),
+      description: (block.match(/description:\s*["'](.+?)["']/) || [])[1] || "",
+      requiredVersion: (block.match(/requiredVersion:\s*["'](.+?)["']/) || [])[1] || "0.0.1",
+      version: (block.match(/version:\s*["'](.+?)["']/) || [])[1] || "0.0.1",
+      author: (block.match(/author:\s*["'](.+?)["']/) || [])[1] || "unknown",
+    };
   }
-  return meta;
+  // 没有 WidgetMetadata 就用默认值
+  return {
+    id: path.basename(filePath, ".js"),
+    title: path.basename(filePath, ".js"),
+    description: "",
+    requiredVersion: "0.0.1",
+    version: "0.0.1",
+    author: "unknown",
+  };
 }
  
 const widgets = files.map(file => {
   const meta = extractMeta(path.join(widgetsDir, file));
   return {
     ...meta,
-    url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`
+    url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`,
   };
 });
  
