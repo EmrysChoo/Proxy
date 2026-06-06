@@ -22,7 +22,7 @@ function extractMeta(filePath) {
     meta.version = (block.match(/version:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
     meta.requiredVersion = (block.match(/requiredVersion:\s*["'](.+?)["']/) || [])[1] || "0.0.1";
     meta.author = (block.match(/author:\s*["'](.+?)["']/) || [])[1] || "unknown";
-    // site 字段已移除，不再提取
+    meta.site = (block.match(/site:\s*["'](.+?)["']/) || [])[1] || "";
   } else {
     // 没有 WidgetMetadata 就用默认值
     meta.id = path.basename(filePath, ".js");
@@ -31,6 +31,7 @@ function extractMeta(filePath) {
     meta.version = "0.0.1";
     meta.requiredVersion = "0.0.1";
     meta.author = "unknown";
+    meta.site = "";
   }
 
   return meta;
@@ -39,13 +40,7 @@ function extractMeta(filePath) {
 const widgets = files.map(file => {
   const meta = extractMeta(path.join(widgetsDir, file));
   return {
-    id: meta.id,
-    title: meta.title,
-    description: meta.description,
-    version: meta.version,
-    requiredVersion: meta.requiredVersion,
-    author: meta.author,
-    // site 字段已删除
+    ...meta,
     url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`
   };
 });
