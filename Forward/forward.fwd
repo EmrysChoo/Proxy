@@ -64,16 +64,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/PPnix-1.js"
     },
     {
-      "id": "xunlei.subtitle",
-      "title": "迅雷看看 字幕",
-      "description": "基于迅雷看看接口的字幕搜索 - 仅支持按片名搜索",
-      "version": "1.1.0",
-      "requiredVersion": "0.0.1",
-      "author": "EL",
-      "site": "https://www.xunlei.com/",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/THUNDER字幕.js"
-    },
-    {
       "id": "TV_LIVE_AUTO",
       "title": "电视台",
       "description": "获取热门电视直播频道（智能识别 M3U/TXT/JSON，自动分类，图标缩放，自动请求头）",
