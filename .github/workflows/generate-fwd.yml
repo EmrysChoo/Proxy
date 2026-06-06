@@ -1,33 +1,36 @@
 name: Generate FWD
-
+ 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:   # 支持手动触发
-
+    paths:
+      - 'Forward/JS/**'        # 只在 JS 文件夹有变动时触发
+      - 'Forward/generateFwd.js'  # 生成脚本自身变动也触发
+  workflow_dispatch:             # 支持手动触发
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
+ 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
+ 
       - name: Run generateFwd.js
         run: node Forward/generateFwd.js
-
+ 
       - name: Debug Forward directory
         run: ls -R Forward || echo "Forward 目录不存在"
-
+ 
       - name: Show forward.fwd content
         run: cat Forward/forward.fwd || echo "forward.fwd 未生成"
-
-      - name: Commit and push forward.fwd (force add)
+ 
+      - name: Commit and push forward.fwd
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
