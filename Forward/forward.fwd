@@ -104,16 +104,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/missavovo.js"
     },
     {
-      "id": "forward.meta.subtitlec1at",
-      "title": "SubtitleCat 字幕",
-      "description": "从 subtitlecat.com 搜索并加载中文字幕。",
-      "version": "1.1.0",
-      "requiredVersion": "0.0.1",
-      "author": "AI",
-      "site": "https://github.com/InchStudio/ForwardWidgets",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/multisubtitle.js"
-    },
-    {
       "id": "Pornhub_int",
       "title": "Pornhub",
       "description": "網路收集到的模塊",
