@@ -54,16 +54,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/NSFW-LIVE.js"
     },
     {
-      "id": "ppnix.widget",
-      "title": "PPnix",
-      "description": "PPnix 影视 — 电影/电视剧分类浏览与搜索，支持自定义域名和CF Cookie",
-      "version": "1.0.0",
-      "requiredVersion": "0.0.1",
-      "author": "Spider",
-      "site": "https://github.com",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/PPnix-1.js"
-    },
-    {
       "id": "TV_LIVE_AUTO",
       "title": "电视台",
       "description": "获取热门电视直播频道（智能识别 M3U/TXT/JSON，自动分类，图标缩放，自动请求头）",
