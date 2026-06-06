@@ -75,7 +75,6 @@ function extractMeta(filePath) {
     id: pick("id"),
     title: pick("title"),
     description: pick("description"),
-    requiredVersion: pick("requiredVersion"),
     version: pick("version"),
     author: pick("author"),
   };
