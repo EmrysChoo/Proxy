@@ -46,8 +46,8 @@ const widgets = files.map(file => {
 });
 
 const fwd = {
-  title: "自用模块",
-  description: "Made by Love",
+  title: "My Widegets",
+  description: "各处搜集的模块",
   icon: "https://assets.vvebo.vip/scripts/icon.png",
   widgets
 };
