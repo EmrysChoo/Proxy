@@ -55,12 +55,32 @@ function extractWidgetBlock(content) {
   return null;
 }
 
-// ---------------- ID 清洗：确保 fwd 可用 ----------------
+// ---------------- ID 清洗：只修复非法 ID ----------------
 
 function sanitizeId(id, fallback) {
   if (!id) return fallback;
 
-  let clean = id.replace(/[^a-zA-Z0-9._-]/g, "_");
+  // 如果本来就是合法 ID → 完全不动
+  if (/^[A-Za-z][A-Za-z0-9._-]*$/.test(id)) {
+    return id;
+  }
+
+  let clean = id;
+
+  // 去掉 http:// https://
+  clean = clean.replace(/^https?:\/\//i, "");
+
+  // 去掉域名后缀（.app .com .net 等）
+  clean = clean.replace(/\.(com|app|net|org|xyz|vip|top|tv|cc|io|me)(\/|$)/gi, "_");
+
+  // 替换非法字符为 _
+  clean = clean.replace(/[^A-Za-z0-9._-]/g, "_");
+
+  // 压缩连续多个 _
+  clean = clean.replace(/_+/g, "_");
+
+  // 去掉开头的数字或下划线
+  clean = clean.replace(/^[_0-9]+/, "");
 
   if (!clean.trim()) clean = fallback;
 
