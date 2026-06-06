@@ -4,7 +4,7 @@
   "icon": "https://assets.vvebo.vip/scripts/icon.png",
   "widgets": [
     {
-      "id": "porn_int",
+      "id": "91porn_int",
       "title": "91Porn",
       "description": "91Porn",
       "requiredVersion": "0.0.1",
@@ -13,7 +13,7 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porn_int.js"
     },
     {
-      "id": "porny_int",
+      "id": "91porny_int",
       "title": "91Porny",
       "description": "91Porny",
       "requiredVersion": "0.0.1",
