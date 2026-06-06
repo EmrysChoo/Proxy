@@ -154,16 +154,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/xvideos_int.js"
     },
     {
-      "id": "OleLive.Search",
-      "title": "欧乐影视",
-      "description": "欧乐影视（支持Cookie登录VIP）+ 独立搜索模块（直接搜索欧乐全部资源）+ 分类浏览",
-      "version": "2.9.3",
-      "requiredVersion": "0.0.1",
-      "author": "MoYan",
-      "site": "",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/欧乐:影视.js"
-    },
-    {
       "id": "JianPian",
       "title": "荐片影院",
       "description": "荐片视频源",
