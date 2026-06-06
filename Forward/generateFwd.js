@@ -5,9 +5,9 @@ const widgetsDir = path.join(__dirname, "JS");
 const files = fs.existsSync(widgetsDir)
   ? fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"))
   : [];
-
 console.log("找到的文件:", files);
 
+// ---------------- 工具函数：提取 WidgetMetadata ----------------
 function extractWidgetBlock(content) {
   const startMatch = content.match(/WidgetMetadata\s*=\s*\{/);
   if (!startMatch) return null;
@@ -64,9 +64,8 @@ function extractMeta(filePath) {
   }
 
   function pick(field) {
-    const regex = new RegExp(field + `:\\s*["']([\\s\\S]*?)["']`, 'i');
-    const m = block.match(regex);
-    return m ? m[1].replace(/[\n\r\t]/g, ' ').trim() : null;
+    const m = block.match(new RegExp(field + `:\\s*["']([\\s\\S]*?)["']`));
+    return m ? m[1] : null;
   }
 
   return {
@@ -74,34 +73,35 @@ function extractMeta(filePath) {
     title: pick("title"),
     description: pick("description"),
     version: pick("version"),
-    author: pick("author")
+    author: pick("author"),
   };
 }
 
+// ---------------- 生成 fwd (官方格式) ----------------
 const BASE_RAW_URL = "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS";
 
-const widgets = [];
-for (const file of files) {
-  const meta = extractMeta(path.join(widgetsDir, file));
-  if (meta && meta.id && meta.title) {
-    widgets.push({
+const widgets = files
+  .map(file => {
+    const meta = extractMeta(path.join(widgetsDir, file));
+    if (!meta) return null;
+
+    return {
       id: meta.id,
       title: meta.title,
       description: meta.description || "",
       version: meta.version || "1.0.0",
       author: meta.author || "",
       url: `${BASE_RAW_URL}/${encodeURIComponent(file)}`
-    });
-  } else {
-    console.warn(`⚠ 跳过无效文件: ${file}`, meta);
-  }
-}
+    };
+  })
+  .filter(Boolean);
 
+// 🔥 关键改动：严格按照官方示例的格式
 const fwd = {
   widgets: widgets
 };
 
 const outputPath = path.join(__dirname, "forward.fwd");
 fs.writeFileSync(outputPath, JSON.stringify(fwd, null, 2));
-console.log("✅ 已生成:", outputPath);
-console.log("内容预览:", JSON.stringify(fwd, null, 2).substring(0, 500));
+console.log("✅ forward.fwd 已生成:", outputPath);
+console.log(`📦 共包含 ${widgets.length} 个模块`);
