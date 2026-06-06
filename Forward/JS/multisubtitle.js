@@ -11,7 +11,7 @@ WidgetMetadata = {
     {
       id: "loadSubtitle",
       title: "搜索并加载字幕",
-      functionName: "loadSubtitle",  // 与处理函数名保持一致
+      functionName: "loadSubtitle",  // 与处理函数名保持一致 
       type: "subtitle",               // 保持在原官方规范示例中，这有助于Forward App识别
       params: [
         {
