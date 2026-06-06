@@ -152,16 +152,6 @@
       "author": "網路",
       "site": "https://github.com/baranwang/forward-widget",
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/xvideos_int.js"
-    },
-    {
-      "id": "JianPian",
-      "title": "荐片影院",
-      "description": "荐片视频源",
-      "version": "1.4.2",
-      "requiredVersion": "0.0.1",
-      "author": "MoYan",
-      "site": "",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/荐片:影院.js"
     }
   ]
 }
