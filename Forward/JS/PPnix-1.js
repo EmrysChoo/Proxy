@@ -9,7 +9,7 @@ WidgetMetadata = {
   icon: "",
   version: "1.0.0",
   requiredVersion: "0.0.1",
-  description: "PPnix 影视 — 电影/电视剧分类浏览与搜索，支持自定义域名和 CF Cookie",
+  description: "PPnix 影视 — 电影/电视剧分类浏览与搜索，支持自定义域名和CF Cookie",
   author: "Spider",
   site: "https://github.com",
 
