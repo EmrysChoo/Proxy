@@ -55,66 +55,29 @@ function extractWidgetBlock(content) {
   return null;
 }
 
-// ---------------- ID 清洗：只修复非法 ID ----------------
-
-function sanitizeId(id, fallback) {
-  if (!id) return fallback;
-
-  // 如果本来就是合法 ID → 完全不动
-  if (/^[A-Za-z][A-Za-z0-9._-]*$/.test(id)) {
-    return id;
-  }
-
-  let clean = id;
-
-  // 去掉 http:// https://
-  clean = clean.replace(/^https?:\/\//i, "");
-
-  // 去掉域名后缀（.app .com .net 等）
-  clean = clean.replace(/\.(com|app|net|org|xyz|vip|top|tv|cc|io|me)(\/|$)/gi, "_");
-
-  // 替换非法字符为 _
-  clean = clean.replace(/[^A-Za-z0-9._-]/g, "_");
-
-  // 压缩连续多个 _
-  clean = clean.replace(/_+/g, "_");
-
-  // 去掉开头的数字或下划线
-  clean = clean.replace(/^[_0-9]+/, "");
-
-  if (!clean.trim()) clean = fallback;
-
-  return clean;
-}
-
-// ---------------- 提取元数据 ----------------
+// ---------------- 提取 WidgetMetadata（完全原样，不修改） ----------------
 
 function extractMeta(filePath) {
   const content = fs.readFileSync(filePath, "utf-8");
   const block = extractWidgetBlock(content);
 
-  const fallbackId = path.basename(filePath, ".js");
+  if (!block) {
+    console.warn("⚠ 未找到 WidgetMetadata:", filePath);
+    return null;
+  }
 
-  if (block) {
-    const rawId = (block.match(/id:\s*["'](.+?)["']/) || [])[1] || fallbackId;
-
-    return {
-      id: sanitizeId(rawId, fallbackId),
-      title: (block.match(/title:\s*["'](.+?)["']/) || [])[1] || fallbackId,
-      description: (block.match(/description:\s*["'](.+?)["']/) || [])[1] || "",
-      requiredVersion: (block.match(/requiredVersion:\s*["'](.+?)["']/) || [])[1] || "0.0.1",
-      version: (block.match(/version:\s*["'](.+?)["']/) || [])[1] || "0.0.1",
-      author: (block.match(/author:\s*["'](.+?)["']/) || [])[1] || "unknown",
-    };
+  function pick(field) {
+    const m = block.match(new RegExp(field + `:\\s*["']([\\s\\S]*?)["']`));
+    return m ? m[1] : null;
   }
 
   return {
-    id: fallbackId,
-    title: fallbackId,
-    description: "",
-    requiredVersion: "0.0.1",
-    version: "0.0.1",
-    author: "unknown",
+    id: pick("id"),
+    title: pick("title"),
+    description: pick("description"),
+    requiredVersion: pick("requiredVersion"),
+    version: pick("version"),
+    author: pick("author"),
   };
 }
 
@@ -122,13 +85,17 @@ function extractMeta(filePath) {
 
 const BASE_RAW_URL = "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS";
 
-const widgets = files.map(file => {
-  const meta = extractMeta(path.join(widgetsDir, file));
-  return {
-    ...meta,
-    url: `${BASE_RAW_URL}/${encodeURIComponent(file)}`,
-  };
-});
+const widgets = files
+  .map(file => {
+    const meta = extractMeta(path.join(widgetsDir, file));
+    if (!meta) return null;
+
+    return {
+      ...meta,
+      url: `${BASE_RAW_URL}/${encodeURIComponent(file)}`,
+    };
+  })
+  .filter(Boolean);
 
 const fwd = {
   title: "自用模块",
