@@ -76,7 +76,7 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/TV%20LIVE.js"
     },
     {
-      "id": "ddys.app_mod_resource",
+      "id": "ddys.app",
       "title": "低调影视播放源",
       "description": "低调影视(ddys.app)搜索与播放源返回，供 Forward 搜索播放源使用",
       "requiredVersion": "0.0.1",
