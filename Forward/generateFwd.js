@@ -1,11 +1,25 @@
 const fs = require("fs");
 const path = require("path");
 
+console.log("========== 开始生成 forward.fwd ==========");
+console.log("脚本所在目录:", __dirname);
+
 const widgetsDir = path.join(__dirname, "JS");
-const files = fs.existsSync(widgetsDir)
-  ? fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"))
-  : [];
-console.log("找到的文件:", files);
+console.log("JS 目录路径:", widgetsDir);
+console.log("JS 目录是否存在?", fs.existsSync(widgetsDir));
+
+if (!fs.existsSync(widgetsDir)) {
+  console.error("❌ 错误：JS 目录不存在！请检查目录结构。");
+  process.exit(1);
+}
+
+const files = fs.readdirSync(widgetsDir).filter(f => f.endsWith(".js"));
+console.log(`找到 ${files.length} 个 JS 文件:`, files);
+
+if (files.length === 0) {
+  console.error("❌ 错误：JS 目录下没有 .js 文件！");
+  process.exit(1);
+}
 
 // ---------------- 工具函数：提取 WidgetMetadata ----------------
 function extractWidgetBlock(content) {
@@ -77,31 +91,50 @@ function extractMeta(filePath) {
   };
 }
 
-// ---------------- 生成 fwd (官方格式) ----------------
+// ---------------- 生成 fwd ----------------
 const BASE_RAW_URL = "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS";
 
-const widgets = files
-  .map(file => {
-    const meta = extractMeta(path.join(widgetsDir, file));
-    if (!meta) return null;
-
-    return {
+const widgets = [];
+for (const file of files) {
+  console.log(`处理文件: ${file}`);
+  const filePath = path.join(widgetsDir, file);
+  const meta = extractMeta(filePath);
+  
+  if (meta && meta.id && meta.title) {
+    widgets.push({
       id: meta.id,
       title: meta.title,
       description: meta.description || "",
       version: meta.version || "1.0.0",
       author: meta.author || "",
       url: `${BASE_RAW_URL}/${encodeURIComponent(file)}`
-    };
-  })
-  .filter(Boolean);
+    });
+    console.log(`  ✅ 成功添加: ${meta.title} (${meta.id})`);
+  } else {
+    console.log(`  ❌ 跳过: 缺少 id 或 title`);
+  }
+}
 
-// 🔥 关键改动：严格按照官方示例的格式
-const fwd = {
-  widgets: widgets
-};
+if (widgets.length === 0) {
+  console.error("❌ 没有有效的模块可生成！");
+  process.exit(1);
+}
 
+const fwd = { widgets: widgets };
 const outputPath = path.join(__dirname, "forward.fwd");
-fs.writeFileSync(outputPath, JSON.stringify(fwd, null, 2));
-console.log("✅ forward.fwd 已生成:", outputPath);
-console.log(`📦 共包含 ${widgets.length} 个模块`);
+
+try {
+  fs.writeFileSync(outputPath, JSON.stringify(fwd, null, 2), "utf-8");
+  console.log(`\n✅ forward.fwd 已生成: ${outputPath}`);
+  console.log(`📦 共包含 ${widgets.length} 个模块`);
+  
+  // 验证文件是否真的写入了
+  if (fs.existsSync(outputPath)) {
+    const stats = fs.statSync(outputPath);
+    console.log(`📄 文件大小: ${stats.size} bytes`);
+  }
+} catch (err) {
+  console.error("❌ 写入文件失败:", err.message);
+}
+
+console.log("========== 生成完成 ==========");
