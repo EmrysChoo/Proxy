@@ -3,7 +3,7 @@ const UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/6
 const PLAY_HEADERS = { "User-Agent": UA, "Referer": SITE + "/", "Origin": SITE };
 
 var WidgetMetadata = {
-  id: "https://ddys.app?mod=resource",
+  id: "ddys.app",
   title: "低调影视播放源",
   description: "低调影视(ddys.app)搜索与播放源返回，供 Forward 搜索播放源使用",
   author: "TG@ZenMoFiShi",
