@@ -1,5 +1,5 @@
 WidgetMetadata = {
-  id: "forward.meta.subtitlecat",  // 更新为唯一标识符
+  id: "forward.meta.subtitlec1at",  // 更新为唯一标识符
   title: "SubtitleCat 字幕",
   icon: "https://assets.vvebo.vip/scripts/icon.png",
   version: "1.1.0",                
