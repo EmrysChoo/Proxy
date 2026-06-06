@@ -4,7 +4,7 @@
   "icon": "https://assets.vvebo.vip/scripts/icon.png",
   "widgets": [
     {
-      "id": "91porn_int",
+      "id": "porn_int",
       "title": "91Porn",
       "description": "91Porn",
       "requiredVersion": "0.0.1",
@@ -13,7 +13,7 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/91porn_int.js"
     },
     {
-      "id": "91porny_int",
+      "id": "porny_int",
       "title": "91Porny",
       "description": "91Porny",
       "requiredVersion": "0.0.1",
@@ -76,7 +76,7 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/TV%20LIVE.js"
     },
     {
-      "id": "https___ddys.app_mod_resource",
+      "id": "ddys.app_mod_resource",
       "title": "低调影视播放源",
       "description": "低调影视(ddys.app)搜索与播放源返回，供 Forward 搜索播放源使用",
       "requiredVersion": "0.0.1",
