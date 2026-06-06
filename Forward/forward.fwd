@@ -74,16 +74,6 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/TV LIVE.js"
     },
     {
-      "id": "ddysresource",
-      "title": "低调影视播放源",
-      "description": "低调影视(ddys.app)搜索与播放源返回，供 Forward 搜索播放源使用",
-      "version": "1.0.0",
-      "requiredVersion": "0.0.1",
-      "author": "TG@ZenMoFiShi",
-      "site": "https://t.me/Nzmgs",
-      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/forward_ddys.js"
-    },
-    {
       "id": "jable_int",
       "title": "Jable",
       "description": "修复声音&恢复大量分类",
