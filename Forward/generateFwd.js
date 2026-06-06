@@ -85,11 +85,13 @@ function extractMeta(filePath) {
   };
 }
  
+const BASE_RAW_URL = "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS";
+ 
 const widgets = files.map(file => {
   const meta = extractMeta(path.join(widgetsDir, file));
   return {
     ...meta,
-    url: `https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/${file}`,
+    url: `${BASE_RAW_URL}/${encodeURIComponent(file)}`,
   };
 });
  
