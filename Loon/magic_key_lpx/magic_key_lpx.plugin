@@ -4,54 +4,25 @@
 #!version=2.0
 #!updated=2026-06-09
 #!icon=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Icon/magic_key.png
+#!homepage=https://github.com/EmrysChoo/Proxy
 
-[UI]
-{
-  "sections": [
-    {
-      "title": "功能开关",
-      "items": [
-        {
-          "key": "tmdb_enabled",
-          "type": "switch",
-          "title": "TMDB 成人内容解锁",
-          "description": "解锁搜索/推荐的 NSFW 限制",
-          "icon": "film.stack",
-          "default": true
-        },
-        {
-          "key": "t66y_enabled",
-          "type": "switch",
-          "title": "草榴移动版",
-          "description": "自动跳转移动版",
-          "icon": "doc.text.magnifyingglass",
-          "default": true
-        },
-        {
-          "key": "forward_enabled",
-          "type": "switch",
-          "title": "Forward 成人内容解锁",
-          "description": "解锁搜索的 NSFW 限制",
-          "icon": "magnifyingglass",
-          "default": true
-        }
-      ]
-    }
-  ]
-}
+[Argument]
+tmdb_enabled = switch, "true", tag=TMDB 成人内容解锁, desc=解锁搜索/推荐的 NSFW 限制
+t66y_enabled = switch, "true", tag=草榴移动版, desc=自动跳转移动版
+forward_enabled = switch, "true", tag=Forward 成人内容解锁, desc=解锁搜索的 NSFW 限制
 
 [Script]
 # TMDB 搜索接口 - 解锁成人内容
-url-regex ^https:\/\/api\.themoviedb\.org\/3\/search\/\w+\?.* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_tmdb.js, requires-body=false, timeout=10, tag=TMDB-Unlock
+http-request ^https:\/\/api\.themoviedb\.org\/3\/search\/\w+\?.*$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_tmdb.js, timeout=10, argument=[{tmdb_enabled}], tag=TMDB-Search-Unlock
 
 # TMDB 详情页 - 相似/推荐 解锁成人内容
-url-regex ^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?.* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_tmdb.js, requires-body=false, timeout=10, tag=TMDB-Similar
+http-request ^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?.*$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_tmdb.js, timeout=10, argument=[{tmdb_enabled}], tag=TMDB-Similar-Unlock
 
 # T66Y 图片页面 → 移动版
-url-regex ^https?:\/\/www\.t66y\.com\/htm_data\/\d+\/\d+\/\d+\.html$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_t66y.js, requires-body=false, timeout=10, tag=T66Y-Mobile
+http-request ^https?:\/\/www\.t66y\.com\/htm_data\/\d+\/\d+\/\d+\.html$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_t66y.js, timeout=10, argument=[{t66y_enabled}], tag=T66Y-Mobile
 
 # Forward 搜索 - 解锁成人内容
-url-regex ^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?.*include_adult=false.* script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_forward.js, requires-body=false, timeout=10, tag=Forward-Unlock
+http-request ^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?.*include_adult=false.*$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/magic_key_lpx/magic_key_forward.js, timeout=10, argument=[{forward_enabled}], tag=Forward-Unlock
 
 [MITM]
 hostname=api.themoviedb.org, forwardinfo.vvebo.vip, www.t66y.com
