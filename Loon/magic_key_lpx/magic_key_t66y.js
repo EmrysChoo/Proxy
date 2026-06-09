@@ -1,10 +1,10 @@
 /**
  * 草榴移动版跳转脚本
- * Loon 脚本格式
+ * Loon 脚本格式 - 使用 $argument 读取参数
  */
 
 // 读取开关状态
-const enabled = $prefs.valueForKey("t66y_enabled") !== "false";
+const enabled = $argument.t66y_enabled !== "false";
 
 if (!enabled) {
     // 开关关闭，直接放行
