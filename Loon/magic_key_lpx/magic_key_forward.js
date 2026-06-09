@@ -1,12 +1,9 @@
 /**
  * Forward 成人内容解锁脚本
- * 读取开关状态，解锁搜索的 NSFW 限制
+ * Loon 脚本格式
  */
 
-const $prefs = typeof $prefs !== 'undefined' ? $prefs : { valueForKey: () => 'true' };
-const $request = typeof $request !== 'undefined' ? $request : { url: '' };
-
-// 检查开关是否开启
+// 读取开关状态
 const enabled = $prefs.valueForKey("forward_enabled") !== "false";
 
 if (!enabled) {
