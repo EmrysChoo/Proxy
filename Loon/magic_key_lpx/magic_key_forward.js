@@ -1,10 +1,10 @@
 /**
  * Forward 成人内容解锁脚本
- * Loon 脚本格式
+ * Loon 脚本格式 - 使用 $argument 读取参数
  */
 
 // 读取开关状态
-const enabled = $prefs.valueForKey("forward_enabled") !== "false";
+const enabled = $argument.forward_enabled !== "false";
 
 if (!enabled) {
     // 开关关闭，直接放行
