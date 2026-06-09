@@ -1,0 +1,61 @@
+#!name = 神奇钥匙 LPX 版
+#!desc = TMDB/T66Y/Forward 功能开关，每个功能可单独控制
+#!author = Evan
+#!version = 2.0
+#!updated = 2026-06-09
+
+#!icon = https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Icon/magic_key.png
+
+[UI]
+{
+  "sections": [
+    {
+      "title": "功能开关",
+      "items": [
+        {
+          "key": "tmdb_enabled",
+          "type": "switch",
+          "title": "TMDB 成人内容解锁",
+          "description": "解锁搜索/推荐的 NSFW 限制",
+          "icon": "film.stack",
+          "default": true
+        },
+        {
+          "key": "t66y_enabled",
+          "type": "switch",
+          "title": "草榴移动版",
+          "description": "自动跳转移动版",
+          "icon": "doc.text.magnifyingglass",
+          "default": true
+        },
+        {
+          "key": "forward_enabled",
+          "type": "switch",
+          "title": "Forward 成人内容解锁",
+          "description": "解锁搜索的 NSFW 限制",
+          "icon": "magnifyingglass",
+          "default": true
+        }
+      ]
+    }
+  ]
+}
+
+[Script]
+# TMDB 搜索接口 - 解锁成人内容
+url-regex,^https:\/\/api\.themoviedb\.org\/3\/search\/\w+\?.*,requires-body=0,timeout=10,script-path=magic_key_tmdb.js
+
+# TMDB 详情页 - 相似/推荐 解锁成人内容
+url-regex,^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?.*,requires-body=0,timeout=10,script-path=magic_key_tmdb.js
+
+# T66Y 图片页面 → 移动版
+url-regex,^https?:\/\/www\.t66y\.com\/\/htm_data\/\d+\/\d+\/\d+\.html$,requires-body=0,timeout=10,script-path=magic_key_t66y.js
+
+# T66Y 帖子页面 → 移动版
+url-regex,^https?:\/\/www\.t66y\.com\/htm_data\/\d+\/\d+\/\d+\.html$,requires-body=0,timeout=10,script-path=magic_key_t66y.js
+
+# Forward 搜索 - 解锁成人内容
+url-regex,^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?.*include_adult=false.*,requires-body=0,timeout=10,script-path=magic_key_forward.js
+
+[MITM]
+hostname = api.themoviedb.org, forwardinfo.vvebo.vip, www.t66y.com
