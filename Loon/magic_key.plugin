@@ -1,14 +1,20 @@
 #!name = 神秘钥匙
 #!desc = TMDB：解锁搜索限制；T66Y：移动版跳转；Forward：解锁搜索限制
 #!author = Evan
-#!version = 1.7
-#!updated = 2025-12-20
+#!version = 1.8
+#!updated = 2026-06-09
 
 [Rewrite]
-# TMDB 解锁搜索限制
-^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+# TMDB 修复 include_adult=1 → true（TMDB 不认 1）
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword\/connection)\?(.*&)?include_adult=1(&.*)?$ 302 https://api.themoviedb.org/3/search/$1?$2include_adult=true$3
 
-# TMDB 详情页 相似 / 推荐 解锁 NSFW
+# TMDB 详情页 修复 include_adult=1 → true
+^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(.*&)?include_adult=1(&.*)?$ 302 https://api.themoviedb.org/3/$1/$2?$3include_adult=true$4
+
+# TMDB 搜索解锁（无 include_adult 时追加）
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword\/connection)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+
+# TMDB 详情页解锁（无 include_adult 时追加）
 ^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
 
 # T66Y 移动版跳转
