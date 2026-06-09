@@ -6,10 +6,10 @@
 
 [Rewrite]
 # TMDB 解锁搜索限制
-^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
+^https:\/\/api\.themoviedb\.org\/3\/search\/(movie|person|tv|multi|keyword/connection)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/search/$1?$2&include_adult=true
 
 # TMDB 详情页 相似 / 推荐 解锁 NSFW
-^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(?!.*include_adult=true)(.*)$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
+^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
 
 # T66Y 移动版跳转
 ^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3
