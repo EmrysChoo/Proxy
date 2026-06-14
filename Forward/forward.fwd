@@ -34,6 +34,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/Hanime1_fw.js"
     },
     {
+      "id": "HeiliaoV1.9",
+      "title": "HeiliaoV1.9",
+      "description": "",
+      "version": "0.0.1",
+      "requiredVersion": "0.0.1",
+      "author": "unknown",
+      "site": "",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/HeiliaoV1.9.js"
+    },
+    {
       "id": "VOD_STREAM",
       "title": "VOD STREAM",
       "description": "获取聚合VOD影视资源，智能分组，连接质量排序",
@@ -74,6 +84,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/TV LIVE.js"
     },
     {
+      "id": "bagua-v2.5",
+      "title": "bagua-v2.5",
+      "description": "",
+      "version": "0.0.1",
+      "requiredVersion": "0.0.1",
+      "author": "unknown",
+      "site": "",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/bagua-v2.5.js"
+    },
+    {
       "id": "jable_int",
       "title": "Jable",
       "description": "修复声音&恢复大量分类",
@@ -112,6 +132,16 @@
       "author": "𝙈𝙖𝙠𝙠𝙖𝙋𝙖𝙠𝙠𝙖",
       "site": "https://missav.ai",
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/missavovo.js"
+    },
+    {
+      "id": "Pornhub_int",
+      "title": "Pornhub",
+      "description": "Pornhub 视频聚合模块，解决列表加载慢的问题、新增详情页演员、剧照功能，全局搜索",
+      "version": "2.0.0",
+      "requiredVersion": "0.0.1",
+      "author": "海带|EL",
+      "site": "https://cn.pornhub.com",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/pornhub2.0 .js"
     },
     {
       "id": "Pornhub_int",
