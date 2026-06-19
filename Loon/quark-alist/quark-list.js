@@ -1,108 +1,72 @@
 /**
- * 夸克网盘 Alist 协议 - 文件列表
- * POST /api/fs/list
+ * 夸克网盘 Alist - 文件列表响应转换
+ * 将夸克API响应转换为Alist格式
  */
 
 const args = $argument || {};
 const cookie = args.quark_cookie || "";
 
-if (!cookie) {
+if (!$response || !$response.body) {
+  $done({});
+  return;
+}
+
+try {
+  const result = JSON.parse($response.body);
+  
+  if (result.status !== 200 || !result.data || !result.data.list) {
+    $done({
+      response: {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: 500, message: "获取文件列表失败" })
+      }
+    });
+    return;
+  }
+
+  const files = result.data.list.map(f => ({
+    name: f.file_name,
+    size: f.size || 0,
+    is_dir: !f.file,
+    modified: f.updated_at || new Date().toISOString(),
+    created: f.created_at || new Date().toISOString(),
+    hash_info: null,
+    thumb: f.thumb_url || "",
+    type: !f.file ? 0 : getFileType(f.file_name),
+    sign: "",
+    raw_url: ""
+  }));
+
+  const total = parseInt(result.metadata._total);
+
   $done({
     response: {
       status: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: 401, message: "请在插件设置中填入夸克Cookie" })
+      body: JSON.stringify({
+        code: 200,
+        message: "success",
+        data: {
+          content: files,
+          total: total,
+          readme: "",
+          header: "",
+          write: true,
+          provider: "Quark"
+        }
+      })
     }
   });
-  return;
+} catch (e) {
+  $done({
+    response: {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: 500, message: "解析错误" })
+    }
+  });
 }
-
-const body = JSON.parse($request.body);
-const path = body.path || "/";
-const page = body.page || 1;
-const per_page = body.per_page || 100;
-
-// 解析路径获取 pdir_fid
-const pathParts = path.split("/").filter(p => p);
-const pdir_fid = pathParts.length > 0 ? pathParts[pathParts.length - 1] : "0";
-
-// 夸克 API 获取文件列表
-const listUrl = `https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_page=${page}&_size=${per_page}&fr=pc&pdir_fid=${pdir_fid}&pr=ucpro`;
-
-$httpClient.get({
-  url: listUrl,
-  headers: {
-    "cookie": cookie,
-    "content-type": "application/json"
-  }
-}, (err, resp, data) => {
-  if (err) {
-    $done({
-      response: {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: 500, message: "网络错误: " + err })
-      }
-    });
-    return;
-  }
-  
-  if (resp.status !== 200) {
-    $done({
-      response: {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: resp.status, message: "请求失败" })
-      }
-    });
-    return;
-  }
-
-  try {
-    const result = JSON.parse(data);
-    const files = result.data.list.map(f => ({
-      name: f.file_name,
-      size: f.size || 0,
-      is_dir: !f.file,
-      modified: f.updated_at || new Date().toISOString(),
-      created: f.created_at || new Date().toISOString(),
-      hash_info: null,
-      thumb: f.thumb_url || "",
-      type: !f.file ? 0 : getFileType(f.file_name),
-      sign: "",
-      raw_url: ""
-    }));
-
-    const total = parseInt(result.metadata._total);
-
-    $done({
-      response: {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code: 200,
-          message: "success",
-          data: {
-            content: files,
-            total: total,
-            readme: "",
-            header: "",
-            write: true,
-            provider: "Quark"
-          }
-        })
-      }
-    });
-  } catch (e) {
-    $done({
-      response: {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: 500, message: "解析错误: " + e.message })
-      }
-    });
-  }
-});
 
 function getFileType(name) {
   const ext = name.split(".").pop().toLowerCase();

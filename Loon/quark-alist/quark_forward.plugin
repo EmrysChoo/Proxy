@@ -5,19 +5,17 @@
 [Argument]
 quark_cookie = input, "", tag=夸克Cookie, desc=在夸克网盘网页版登录后，从浏览器开发者工具复制Cookie
 
+[URL Rewrite]
+^http://quark-alist\.local/api/fs/list  https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_page=1&_size=200&fr=pc&pdir_fid=0&pr=ucpro  302
+^http://quark-alist\.local/api/fs/get  https://drive.quark.cn/1/clouddrive/file/download  302
+
 [Script]
-# 文件列表 /api/fs/list
-http-request ^http://quark-alist\.local/api/fs/list$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
-# 文件信息（含下载链接）/api/fs/get
-http-request ^http://quark-alist\.local/api/fs/get$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-get.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件信息
-# 目录列表 /api/fs/dirs
-http-request ^http://quark-alist\.local/api/fs/dirs$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-dirs.js, timeout=30, argument=[{quark_cookie}], tag=夸克目录列表
-# 存储信息 /api/fs/storage
-http-request ^http://quark-alist\.local/api/fs/storage$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-storage.js, timeout=10, argument=[{quark_cookie}], tag=夸克存储信息
-# 公开设置 /api/public/settings
-http-request ^http://quark-alist\.local/api/public/settings$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-settings.js, timeout=10, tag=夸克公开设置
-# 认证 /api/auth/login
-http-request ^http://quark-alist\.local/api/auth/login$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-auth.js, timeout=10, argument=[{quark_cookie}], tag=夸克认证
+# 修改请求 - 添加cookie
+http-request ^https://drive\.quark\.cn/1/clouddrive/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-request.js, timeout=10, argument=[{quark_cookie}], tag=夸克请求处理
+# 转换响应 - 文件列表
+http-response ^https://drive\.quark\.cn/1/clouddrive/file/sort script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, requires-body=true, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
+# 转换响应 - 下载链接
+http-response ^https://drive\.quark\.cn/1/clouddrive/file/download script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-download.js, requires-body=true, timeout=30, argument=[{quark_cookie}], tag=夸克下载
 
 [MITM]
-hostname = quark-alist.local
+hostname = quark-alist.local, drive.quark.cn
