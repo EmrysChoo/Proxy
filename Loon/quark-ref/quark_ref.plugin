@@ -1,0 +1,13 @@
+#!name=夸克播放 Referer
+#!desc=为夸克网盘播放链接添加 Referer 头，配合 Worker Alist 使用
+#!author=Shayon
+
+[Rule]
+DOMAIN-SUFFIX,drive.quark.cn,DIRECT
+
+[Header Rewrite]
+^https://video-play.*\.drive\.quark\.cn/  -req-header Referer
+^https://video-play.*\.drive\.quark\.cn/  req-header Referer https://pan.quark.cn
+
+[MITM]
+hostname = %APPEND%video-play-c-zb.drive.quark.cn, video-play-h-zb.drive.quark.cn, video-play-sz.drive.quark.cn
