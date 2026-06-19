@@ -1,42 +1,17 @@
 /**
- * 夸克网盘 Alist 协议 - 目录列表（简化版，只有目录）
- * POST /api/fs/dirs
+ * 夸克网盘 Alist - 目录列表响应转换
+ * 将夸克API响应转换为Alist目录格式
  */
 
-const args = $argument || {};
-const cookie = args.quark_cookie || "";
-
-if (!cookie) {
-  $done({
-    response: {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: 401, message: "请在插件设置中填入夸克Cookie" })
-    }
-  });
+if (!$response || !$response.body) {
+  $done({});
   return;
 }
 
-const headers = {
-  "cookie": cookie,
-  "content-type": "application/json"
-};
-
-const body = JSON.parse($request.body);
-const path = body.path || "/";
-
-// 解析路径获取 pdir_fid
-const pathParts = path.split("/").filter(p => p);
-const pdir_fid = pathParts.length > 0 ? pathParts[pathParts.length - 1] : "0";
-
-// 只获取目录
-const listUrl = `https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_page=1&_size=200&fr=pc&pdir_fid=${pdir_fid}&pr=ucpro`;
-
-$httpClient.get({
-  url: listUrl,
-  headers: headers
-}, (err, resp, data) => {
-  if (err || resp.status !== 200) {
+try {
+  const result = JSON.parse($response.body);
+  
+  if (result.status !== 200 || !result.data || !result.data.list) {
     $done({
       response: {
         status: 200,
@@ -47,7 +22,6 @@ $httpClient.get({
     return;
   }
 
-  const result = JSON.parse(data);
   const dirs = result.data.list
     .filter(f => !f.file)
     .map(f => ({
@@ -66,4 +40,12 @@ $httpClient.get({
       })
     }
   });
-});
+} catch (e) {
+  $done({
+    response: {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: 500, message: "解析错误" })
+    }
+  });
+}

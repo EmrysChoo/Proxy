@@ -1,6 +1,6 @@
 /**
- * 夸克网盘 Alist 协议 - 认证
- * POST /api/auth/login
+ * 夸克网盘 Alist - 认证
+ * 返回认证状态
  */
 
 const args = $argument || {};

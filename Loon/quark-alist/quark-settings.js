@@ -1,6 +1,6 @@
 /**
- * 夸克网盘 Alist 协议 - 公开设置
- * GET /api/public/settings
+ * 夸克网盘 Alist - 公开设置
+ * 返回Alist公开设置信息
  */
 
 $done({

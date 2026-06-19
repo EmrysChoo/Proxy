@@ -1,6 +1,6 @@
 /**
- * 夸克网盘 Alist 协议 - 存储信息
- * GET /api/fs/storage
+ * 夸克网盘 Alist - 存储信息
+ * 返回存储信息
  */
 
 const args = $argument || {};
