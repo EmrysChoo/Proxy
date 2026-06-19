@@ -1,13 +1,10 @@
-#!name=夸克网盘 Alist
-#!desc=将夸克网盘暴露为Alist协议，供Forward/VLC/Infuse等播放器直接访问
+#!name=夸克网盘 Alist 测试
+#!desc=测试MITM是否能拦截请求
 #!author=Shayon
 
-[Argument]
-quark_cookie = input, "", tag=夸克Cookie, desc=在夸克网盘网页版登录后，从浏览器开发者工具复制Cookie
-
 [Script]
-# 文件列表
-http-request ^http://quark\.example\.com/api/fs/list script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
+# 简单测试 - 直接返回静态响应
+http-request ^http://quark-alist\.local/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-test.js, timeout=10, tag=测试
 
 [MITM]
-hostname = quark.example.com
+hostname = quark-alist.local
