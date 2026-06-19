@@ -7,11 +7,11 @@ quark_cookie = input, "", tag=夸克Cookie, desc=在夸克网盘网页版登录�
 
 [Script]
 # 文件列表 /api/fs/list
-http-request ^http://quark-alist\.local/api/fs/list$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=10, argument=[{quark_cookie}], tag=夸克文件列表
+http-request ^http://quark-alist\.local/api/fs/list$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
 # 文件信息（含下载链接）/api/fs/get
-http-request ^http://quark-alist\.local/api/fs/get$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-get.js, timeout=10, argument=[{quark_cookie}], tag=夸克文件信息
+http-request ^http://quark-alist\.local/api/fs/get$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-get.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件信息
 # 目录列表 /api/fs/dirs
-http-request ^http://quark-alist\.local/api/fs/dirs$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-dirs.js, timeout=10, argument=[{quark_cookie}], tag=夸克目录列表
+http-request ^http://quark-alist\.local/api/fs/dirs$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-dirs.js, timeout=30, argument=[{quark_cookie}], tag=夸克目录列表
 # 存储信息 /api/fs/storage
 http-request ^http://quark-alist\.local/api/fs/storage$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-storage.js, timeout=10, argument=[{quark_cookie}], tag=夸克存储信息
 # 公开设置 /api/public/settings
