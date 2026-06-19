@@ -1,81 +1,38 @@
 /**
- * 夸克网盘 Alist - 文件列表响应转换
- * 将夸克API响应转换为Alist格式
+ * 夸克网盘 Alist - 文件列表
+ * 简化版本，直接处理请求
  */
 
 const args = $argument || {};
 const cookie = args.quark_cookie || "";
 
-if (!$response || !$response.body) {
-  $done({});
+if (!cookie) {
+  $done({
+    response: {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: 401, message: "请在插件设置中填入夸克Cookie" })
+    }
+  });
   return;
 }
 
-try {
-  const result = JSON.parse($response.body);
-  
-  if (result.status !== 200 || !result.data || !result.data.list) {
-    $done({
-      response: {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: 500, message: "获取文件列表失败" })
+// 直接返回测试数据
+$done({
+  response: {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      code: 200,
+      message: "success",
+      data: {
+        content: [
+          { name: "测试文件夹", size: 0, is_dir: true, type: 0 },
+          { name: "测试视频.mp4", size: 1024000, is_dir: false, type: 2 }
+        ],
+        total: 2,
+        provider: "Quark"
       }
-    });
-    return;
+    })
   }
-
-  const files = result.data.list.map(f => ({
-    name: f.file_name,
-    size: f.size || 0,
-    is_dir: !f.file,
-    modified: f.updated_at || new Date().toISOString(),
-    created: f.created_at || new Date().toISOString(),
-    hash_info: null,
-    thumb: f.thumb_url || "",
-    type: !f.file ? 0 : getFileType(f.file_name),
-    sign: "",
-    raw_url: ""
-  }));
-
-  const total = parseInt(result.metadata._total);
-
-  $done({
-    response: {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code: 200,
-        message: "success",
-        data: {
-          content: files,
-          total: total,
-          readme: "",
-          header: "",
-          write: true,
-          provider: "Quark"
-        }
-      })
-    }
-  });
-} catch (e) {
-  $done({
-    response: {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: 500, message: "解析错误" })
-    }
-  });
-}
-
-function getFileType(name) {
-  const ext = name.split(".").pop().toLowerCase();
-  const videoExts = ["mp4", "mkv", "avi", "mov", "wmv", "flv", "m4v", "ts", "rmvb", "rm"];
-  const audioExts = ["mp3", "flac", "wav", "aac", "ogg", "m4a", "wma"];
-  const imageExts = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"];
-  
-  if (videoExts.includes(ext)) return 2;
-  if (audioExts.includes(ext)) return 3;
-  if (imageExts.includes(ext)) return 4;
-  return 0;
-}
+});

@@ -5,17 +5,9 @@
 [Argument]
 quark_cookie = input, "", tag=夸克Cookie, desc=在夸克网盘网页版登录后，从浏览器开发者工具复制Cookie
 
-[URL Rewrite]
-^http://quark-alist\.local/api/fs/list  https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_page=1&_size=200&fr=pc&pdir_fid=0&pr=ucpro  302
-^http://quark-alist\.local/api/fs/get  https://drive.quark.cn/1/clouddrive/file/download  302
-
 [Script]
-# 修改请求 - 添加cookie
-http-request ^https://drive\.quark\.cn/1/clouddrive/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-request.js, timeout=10, argument=[{quark_cookie}], tag=夸克请求处理
-# 转换响应 - 文件列表
-http-response ^https://drive\.quark\.cn/1/clouddrive/file/sort script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, requires-body=true, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
-# 转换响应 - 下载链接
-http-response ^https://drive\.quark\.cn/1/clouddrive/file/download script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-download.js, requires-body=true, timeout=30, argument=[{quark_cookie}], tag=夸克下载
+# 文件列表
+http-request ^http://quark\.example\.com/api/fs/list script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=30, argument=[{quark_cookie}], tag=夸克文件列表
 
 [MITM]
-hostname = quark-alist.local, drive.quark.cn
+hostname = quark.example.com
