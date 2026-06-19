@@ -17,11 +17,6 @@ if (!cookie) {
   return;
 }
 
-const headers = {
-  "cookie": cookie,
-  "content-type": "application/json"
-};
-
 const body = JSON.parse($request.body);
 const path = body.path || "/";
 const page = body.page || 1;
@@ -36,53 +31,77 @@ const listUrl = `https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_p
 
 $httpClient.get({
   url: listUrl,
-  headers: headers
+  headers: {
+    "cookie": cookie,
+    "content-type": "application/json"
+  }
 }, (err, resp, data) => {
-  if (err || resp.status !== 200) {
+  if (err) {
     $done({
       response: {
         status: 200,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: 500, message: "获取文件列表失败" })
+        body: JSON.stringify({ code: 500, message: "网络错误: " + err })
+      }
+    });
+    return;
+  }
+  
+  if (resp.status !== 200) {
+    $done({
+      response: {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: resp.status, message: "请求失败" })
       }
     });
     return;
   }
 
-  const result = JSON.parse(data);
-  const files = result.data.list.map(f => ({
-    name: f.file_name,
-    size: f.size || 0,
-    is_dir: !f.file,
-    modified: f.updated_at || new Date().toISOString(),
-    created: f.created_at || new Date().toISOString(),
-    hash_info: null,
-    thumb: f.thumb_url || "",
-    type: !f.file ? 0 : getFileType(f.file_name),
-    sign: "",
-    raw_url: ""
-  }));
+  try {
+    const result = JSON.parse(data);
+    const files = result.data.list.map(f => ({
+      name: f.file_name,
+      size: f.size || 0,
+      is_dir: !f.file,
+      modified: f.updated_at || new Date().toISOString(),
+      created: f.created_at || new Date().toISOString(),
+      hash_info: null,
+      thumb: f.thumb_url || "",
+      type: !f.file ? 0 : getFileType(f.file_name),
+      sign: "",
+      raw_url: ""
+    }));
 
-  const total = parseInt(result.metadata._total);
+    const total = parseInt(result.metadata._total);
 
-  $done({
-    response: {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code: 200,
-        message: "success",
-        data: {
-          content: files,
-          total: total,
-          readme: "",
-          header: "",
-          write: true,
-          provider: "Quark"
-        }
-      })
-    }
-  });
+    $done({
+      response: {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: 200,
+          message: "success",
+          data: {
+            content: files,
+            total: total,
+            readme: "",
+            header: "",
+            write: true,
+            provider: "Quark"
+          }
+        })
+      }
+    });
+  } catch (e) {
+    $done({
+      response: {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: 500, message: "解析错误: " + e.message })
+      }
+    });
+  }
 });
 
 function getFileType(name) {
