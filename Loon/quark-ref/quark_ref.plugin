@@ -5,13 +5,8 @@
 [Argument]
 quark_cookie = input, "", tag=夸克Cookie, desc=夸克网盘登录Cookie
 
-[Header Rewrite]
-^https://video-play.*\.drive\.quark\.cn/ header-add sec-fetch-dest video
-^https://video-play.*\.drive\.quark\.cn/ header-add sec-fetch-mode no-cors
-^https://video-play.*\.drive\.quark\.cn/ header-add sec-fetch-site same-origin
-
 [Script]
-http-request ^https:\/\/video-play.*\.drive\.quark\.cn\/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-ref/quark_ref.js, timeout=10, argument=[{quark_cookie}], tag=夸克播放Cookie
+http-request ^https:\/\/video-play.*\.drive\.quark\.cn\/ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-ref/quark_ref.js, timeout=10, argument=[{quark_cookie}], tag=夸克播放Headers
 
 [MITM]
 hostname = video-play-c-zb.drive.quark.cn, video-play-h-zb.drive.quark.cn, video-play-sz.drive.quark.cn
