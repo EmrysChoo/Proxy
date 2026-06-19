@@ -1,5 +1,5 @@
 #!name=夸克播放修复
-#!desc=为夸克网盘播放链接添加必要的Headers，解决412错误
+#!desc=为夸克网盘播放链接添加sec-fetch Headers，配合Worker Alist使用。需手动添加Cookie复写规则。
 #!author=Shayon
 
 [Header Rewrite]
