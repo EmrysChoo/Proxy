@@ -3,7 +3,9 @@
  * POST /api/fs/list
  */
 
-const cookie = $persistentStore.read("quark-ck");
+const args = $argument || {};
+const cookie = args.quark_cookie || "";
+
 if (!cookie) {
   $done({
     response: {
@@ -24,18 +26,18 @@ const body = JSON.parse($request.body);
 const path = body.path || "/";
 const page = body.page || 1;
 const per_page = body.per_page || 100;
-const refresh = body.refresh || false;
 
 // 解析路径获取 pdir_fid
-// 根目录: path="/" -> pdir_fid=0
-// 子目录: path="/xxx" -> pdir_fid=xxx
 const pathParts = path.split("/").filter(p => p);
 const pdir_fid = pathParts.length > 0 ? pathParts[pathParts.length - 1] : "0";
 
 // 夸克 API 获取文件列表
 const listUrl = `https://drive.quark.cn/1/clouddrive/file/sort?_fetch_total=1&_page=${page}&_size=${per_page}&fr=pc&pdir_fid=${pdir_fid}&pr=ucpro`;
 
-$httpAPI("GET", listUrl, headers, null, (err, resp, data) => {
+$httpClient.get({
+  url: listUrl,
+  headers: headers
+}, (err, resp, data) => {
   if (err || resp.status !== 200) {
     $done({
       response: {
@@ -57,7 +59,7 @@ $httpAPI("GET", listUrl, headers, null, (err, resp, data) => {
     hash_info: null,
     thumb: f.thumb_url || "",
     type: !f.file ? 0 : getFileType(f.file_name),
-    sign: f.share_token || "",
+    sign: "",
     raw_url: ""
   }));
 

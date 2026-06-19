@@ -1,30 +1,23 @@
 #!name=夸克网盘 Alist
 #!desc=将夸克网盘暴露为Alist协议，供Forward/VLC/Infuse等播放器直接访问
 #!author=Shayon
-#!date=2026-06-19
-#!arguments=quark_cookie[夸克Cookie]
 
-[General]
-skip-hijack-for-h2c=1
-
-[Rule]
-DOMAIN-SUFFIX,quark-alist.local,DIRECT
+[Argument]
+quark_cookie = input, "", tag=夸克Cookie, desc=在夸克网盘网页版登录后，从浏览器开发者工具复制Cookie
 
 [Script]
-# 初始化 - 保存cookie
-^http://quark-alist\.local/init$ request-header quark-init.js
 # 文件列表 /api/fs/list
-^http://quark-alist\.local/api/fs/list$ request-header+body quark-list.js
+http-request ^http://quark-alist\.local/api/fs/list$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-list.js, timeout=10, argument=[{quark_cookie}], tag=夸克文件列表
 # 文件信息（含下载链接）/api/fs/get
-^http://quark-alist\.local/api/fs/get$ request-header+body quark-get.js
+http-request ^http://quark-alist\.local/api/fs/get$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-get.js, timeout=10, argument=[{quark_cookie}], tag=夸克文件信息
 # 目录列表 /api/fs/dirs
-^http://quark-alist\.local/api/fs/dirs$ request-header+body quark-dirs.js
+http-request ^http://quark-alist\.local/api/fs/dirs$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-dirs.js, timeout=10, argument=[{quark_cookie}], tag=夸克目录列表
 # 存储信息 /api/fs/storage
-^http://quark-alist\.local/api/fs/storage$ request-header quark-storage.js
-# 健康检查
-^http://quark-alist\.local/api/public/settings$ request-header quark-settings.js
-# 认证
-^http://quark-alist\.local/api/auth/login$ request-header+body quark-auth.js
+http-request ^http://quark-alist\.local/api/fs/storage$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-storage.js, timeout=10, argument=[{quark_cookie}], tag=夸克存储信息
+# 公开设置 /api/public/settings
+http-request ^http://quark-alist\.local/api/public/settings$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-settings.js, timeout=10, tag=夸克公开设置
+# 认证 /api/auth/login
+http-request ^http://quark-alist\.local/api/auth/login$ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/quark-alist/quark-auth.js, timeout=10, argument=[{quark_cookie}], tag=夸克认证
 
 [MITM]
-hostname = %APPEND%quark-alist.local
+hostname = quark-alist.local

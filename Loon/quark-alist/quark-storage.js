@@ -3,7 +3,9 @@
  * GET /api/fs/storage
  */
 
-const cookie = $persistentStore.read("quark-ck");
+const args = $argument || {};
+const cookie = args.quark_cookie || "";
+
 if (!cookie) {
   $done({
     response: {

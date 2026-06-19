@@ -3,7 +3,9 @@
  * POST /api/fs/get
  */
 
-const cookie = $persistentStore.read("quark-ck");
+const args = $argument || {};
+const cookie = args.quark_cookie || "";
+
 if (!cookie) {
   $done({
     response: {
@@ -22,10 +24,8 @@ const headers = {
 
 const body = JSON.parse($request.body);
 const path = body.path || "/";
-const password = body.password || "";
 
 // 从路径提取文件ID
-// 格式: /xxx/filename.mp4 -> xxx 是文件ID
 const pathParts = path.split("/").filter(p => p);
 const fid = pathParts.length > 0 ? pathParts[pathParts.length - 1] : "";
 

@@ -1,11 +1,11 @@
 /**
  * 夸克网盘 Alist 协议 - 认证
  * POST /api/auth/login
- * 
- * 认证已通过插件设置完成，此接口返回成功状态
  */
 
-const cookie = $persistentStore.read("quark-ck");
+const args = $argument || {};
+const cookie = args.quark_cookie || "";
+
 if (!cookie) {
   $done({
     response: {
