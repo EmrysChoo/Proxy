@@ -1,0 +1,30 @@
+#!name=夸克网盘 Alist
+#!desc=将夸克网盘暴露为Alist协议，供Forward/VLC/Infuse等播放器直接访问
+#!author=Shayon
+#!date=2026-06-19
+#!arguments=quark_cookie[夸克Cookie]
+
+[General]
+skip-hijack-for-h2c=1
+
+[Rule]
+DOMAIN-SUFFIX,quark-alist.local,DIRECT
+
+[Script]
+# 初始化 - 保存cookie
+^http://quark-alist\.local/init$ request-header quark-init.js
+# 文件列表 /api/fs/list
+^http://quark-alist\.local/api/fs/list$ request-header+body quark-list.js
+# 文件信息（含下载链接）/api/fs/get
+^http://quark-alist\.local/api/fs/get$ request-header+body quark-get.js
+# 目录列表 /api/fs/dirs
+^http://quark-alist\.local/api/fs/dirs$ request-header+body quark-dirs.js
+# 存储信息 /api/fs/storage
+^http://quark-alist\.local/api/fs/storage$ request-header quark-storage.js
+# 健康检查
+^http://quark-alist\.local/api/public/settings$ request-header quark-settings.js
+# 认证
+^http://quark-alist\.local/api/auth/login$ request-header+body quark-auth.js
+
+[MITM]
+hostname = %APPEND%quark-alist.local
