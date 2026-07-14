@@ -94,6 +94,16 @@
       "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/bagua-v2.5.js"
     },
     {
+      "id": "https://ddys.app?mod=resource&v=128",
+      "title": "低调影视播放源",
+      "description": "低调影视播放源；Cookie 自动过门禁续期，无需手抓",
+      "version": "1.2.8",
+      "requiredVersion": "0.0.1",
+      "author": "TG@ZenMoFiShi",
+      "site": "https://t.me/Nzmgs",
+      "url": "https://raw.githubusercontent.com/EmrysChoo/Proxy/refs/heads/main/Forward/JS/forward_ddys_v128.js"
+    },
+    {
       "id": "jable_int",
       "title": "Jable",
       "description": "修复声音&恢复大量分类",
