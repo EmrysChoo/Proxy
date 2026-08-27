@@ -1,0 +1,54 @@
+{
+  "$schema": "https://merge.example/schema/connector-plugin-v2.json",
+  "schemaVersion": 1,
+  "runtime": "declarative-feed",
+  "id": "com.reddit.search.emryschoo",
+  "name": "Reddit Search",
+  "version": "1.0.0",
+  "description": "搜索 Reddit 帖子并按 Subreddit 订阅。使用官方 Atom RSS，无需登录。",
+  "homepage": "https://www.reddit.com/",
+  "publisher": {
+    "name": "EmrysChoo",
+    "url": "https://github.com/EmrysChoo"
+  },
+  "iconSystemName": "magnifyingglass",
+  "permissions": {
+    "domains": ["www.reddit.com"],
+    "maximumResponseBytes": 2097152
+  },
+  "input": {
+    "type": "query",
+    "title": "搜索关键词",
+    "placeholder": "例如 world news",
+    "encoding": "urlQuery"
+  },
+  "request": {
+    "url": "https://www.reddit.com/search.rss?q={{input}}&limit=50",
+    "method": "GET",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)"
+    }
+  },
+  "response": {
+    "format": "xml",
+    "source": {
+      "externalID": { "constant": "reddit-search" },
+      "title": { "constant": "Reddit Search" },
+      "homeURL": { "selector": "feed > link[rel=alternate]", "attribute": "href" }
+    },
+    "subscription": {
+      "mode": "feedFromExternalID",
+      "feedURL": "https://www.reddit.com/r/{{externalID}}/.rss?limit=100"
+    },
+    "items": {
+      "selector": "feed > entry",
+      "externalID": { "selector": "category", "attribute": "term" },
+      "url": { "selector": "link", "attribute": "href" },
+      "title": { "selector": "title" },
+      "author": { "selector": "author > name" },
+      "publishedAt": { "selector": "published" },
+      "summary": { "selector": "content" },
+      "images": { "selector": "media|thumbnail", "attribute": "url", "multiple": true }
+    }
+  }
+}
