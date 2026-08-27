@@ -4,7 +4,7 @@
   "runtime": "declarative-feed",
   "id": "com.reddit.subreddit-search.emryschoo",
   "name": "Reddit Subreddit",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "搜索并订阅 Reddit Subreddit。输入关键词搜索相关 Subreddit，点击订阅后自动拉取该 Subreddit 的最新帖子。",
   "homepage": "https://www.reddit.com/",
   "publisher": {
@@ -42,9 +42,9 @@
     },
     "items": {
       "selector": "feed > entry",
-      "externalID": { "selector": "link", "attribute": "href" },
-      "url": { "selector": "link", "attribute": "href" },
-      "title": { "selector": "title" },
+      "externalID": { "selector": "link", "attribute": "href", "required": true },
+      "url": { "selector": "link", "attribute": "href", "required": true },
+      "title": { "selector": "title", "required": true },
       "summary": { "selector": "content" }
     }
   }
