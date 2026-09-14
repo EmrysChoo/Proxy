@@ -1,8 +1,8 @@
 #!name = 神秘钥匙
 #!desc = TMDB：解锁搜索限制；T66Y：移动版跳转；Forward：解锁搜索限制
 #!author = Evan
-#!version = 1.9
-#!updated = 2026-07-26
+#!version = 2.0
+#!updated = 2026-09-14
 
 [Rewrite]
 # TMDB 搜索 修复 include_adult=1 → true（TMDB 不认 1）
@@ -22,6 +22,18 @@
 
 # TMDB 详情页解锁（无 include_adult 时追加）
 ^https:\/\/api\.themoviedb\.org\/3\/(movie|tv)\/\d+\/(similar|recommendations)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/$1/$2?$3&include_adult=true
+
+# TMDB 人物作品 修复 include_adult=1|false → true
+^https:\/\/api\.themoviedb\.org\/3\/person\/(\d+)\/(movie_credits|tv_credits|combined_credits)\?(.*&)?include_adult=(1|false)(&.*)?$ 302 https://api.themoviedb.org/3/person/$1/$2?$3include_adult=true$4
+
+# TMDB 人物详情 修复 include_adult=1|false → true
+^https:\/\/api\.themoviedb\.org\/3\/person\/(\d+)\?(.*&)?include_adult=(1|false)(&.*)?$ 302 https://api.themoviedb.org/3/person/$1?$2include_adult=true$4
+
+# TMDB 人物作品解锁（无 include_adult 时追加）
+^https:\/\/api\.themoviedb\.org\/3\/person\/(\d+)\/(movie_credits|tv_credits|combined_credits)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/person/$1/$2?$3&include_adult=true
+
+# TMDB 人物详情解锁（无 include_adult 时追加）
+^https:\/\/api\.themoviedb\.org\/3\/person\/(\d+)\?(?!.*include_adult=)(.*)$ 302 https://api.themoviedb.org/3/person/$1?$2&include_adult=true
 
 # T66Y 移动版跳转
 ^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3
