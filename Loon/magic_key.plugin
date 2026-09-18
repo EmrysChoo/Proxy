@@ -41,8 +41,6 @@
 # Forward 解锁搜索限制
 ^https?:\/\/forwardinfo\.vvebo\.vip\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://forwardinfo.vvebo.vip/search/multi?$1include_adult=true$2
 
-# RexNow 解锁搜索限制
-^https?:\/\/api\.rexnow\.tv\/search\/multi\?(.*&)?include_adult=false(&.*)?$ 302 https://api.rexnow.tv/search/multi?$1include_adult=true$2
 
 [Script]
 http-response ^https:\/\/api\.themoviedb\.org\/3\/person\/\d+ script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js, requires-body=true, tag=TMDB Adult Filter
