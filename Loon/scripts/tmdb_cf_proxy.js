@@ -1,12 +1,10 @@
-/* TMDB CF 反代开关 + include_adult 解锁
- * 开关 cfproxy：
- *   true  → 请求改写到 Cloudflare Worker 中转（免代理直连）
- *   false → 直连 TMDB，仅补 include_adult=true
- * 由插件 [Argument] 的 switch 控件传入（argument=[{cfproxy}]）
+/* TMDB CF 反代开关 —— 保持 302 客户端跳转机制（响应脚本才能触发）
+ * cfproxy = true  → 302 跳转 Cloudflare Worker 中转
+ * cfproxy = false → 直连 TMDB：API 补 include_adult=true 后 302 回自身
+ * 注意：用「返回 302 响应」而非「改 host」，避免响应脚本不触发
  */
 const WORKER = "tmdb-proxy.me-zhuxy.workers.dev";
 
-// 读取插件开关，默认开启
 let on = true;
 try {
   if ($argument && typeof $argument.cfproxy !== "undefined") {
@@ -18,14 +16,18 @@ try {
 const u = new URL($request.url);
 const isImage = u.hostname === "image.tmdb.org";
 
+let location = "";
 if (on) {
-  // 反代模式：改为请求 Cloudflare Worker
-  u.protocol = "https:";
-  u.hostname = WORKER;
-  u.port = "";
-} else if (!isImage) {
-  // 直连模式：仅强制成人内容
+  // 反代：302 到 Worker
+  location = "https://" + WORKER + u.pathname + u.search;
+} else if (!isImage && u.searchParams.get("include_adult") !== "true") {
+  // 直连：补参数后 302 回自身
   u.searchParams.set("include_adult", "true");
+  location = u.toString();
 }
 
-$done({ url: u.toString() });
+if (location) {
+  $done({ response: { status: 302, headers: { Location: location }, body: "" } });
+} else {
+  $done({});
+}
