@@ -1,16 +1,15 @@
 #!name = 神秘钥匙 · CF直连版
-#!desc = TMDB 经 Cloudflare Worker 直连（无需代理节点）＋解锁成人内容；T66Y/Forward/DriveMBY 解锁
+#!desc = v2.3 · TMDB 反代可开关：开启经 Cloudflare Worker 中转（免代理直连），关闭直连 TMDB；解锁成人内容；T66Y/Forward/DriveMBY 解锁
 #!author = Evan
-#!version = 2.2-cf
+#!version = 2.3-cf
 #!updated = 2026-10-10
 #!homepage = https://github.com/EmrysChoo/Proxy
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Media.png
 
-[Rewrite]
-# —— TMDB 全量经自建 CF Worker 中转（API + 图片）——
-^https?:\/\/api\.themoviedb\.org\/(.*)$ 302 https://tmdb-proxy.me-zhuxy.workers.dev/$1
-^https?:\/\/image\.tmdb\.org\/(.*)$ 302 https://tmdb-proxy.me-zhuxy.workers.dev/$1
+[Argument]
+cfproxy = switch,true,tag=启用 CF 反代,desc=开启：TMDB 经 Cloudflare Worker 中转（无需代理节点）；关闭：直接连 TMDB
 
+[Rewrite]
 # —— T66Y 移动版跳转 ——
 ^https?:\/\/www\.t66y\.com\/\/htm_data\/(\d+)\/(\d+)\/(\d+\.html)$ 302 https://www.t66y.com//htm_mob/$1/$2/$3
 
@@ -22,9 +21,13 @@
 ^https:\/\/drivemby\.inch\.red\/api\/library\/search-tmdb\?(.*&)?include_adult=false(&.*)?$ 302 https://drivemby.inch.red/api/library/search-tmdb?$1include_adult=true$2
 
 [Script]
-# 注意：TMDB 请求已 302 到 Worker，故返回体匹配的是 Worker 域名
-http-response ^https:\/\/tmdb-proxy\.me-zhuxy\.workers\.dev\/3\/(search|person|movie|tv) script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js, requires-body=true, tag=TMDB Adult Filter
-http-response ^https:\/\/drivemby\.inch\.red\/api\/library\/search-tmdb script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js, requires-body=true, tag=DriveMBY Adult Filter
+# —— TMDB 反代 + 参数解锁（开关 cfproxy 控制）——
+http-request ^https?:\/\/api\.themoviedb\.org script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_cf_proxy.js,requires-body=false,tag=TMDB 反代+解锁,argument=[{cfproxy}]
+http-request ^https?:\/\/image\.tmdb\.org script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_cf_proxy.js,requires-body=false,tag=TMDB 图片反代,argument=[{cfproxy}]
+
+# —— 成人内容过滤（反代/直连两种响应域名都匹配）——
+http-response ^https?:\/\/(?:api\.themoviedb\.org|tmdb-proxy\.me-zhuxy\.workers\.dev)\/3\/(?:search|person|movie|tv) script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js,requires-body=true,tag=TMDB Adult Filter
+http-response ^https:\/\/drivemby\.inch\.red\/api\/library\/search-tmdb script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js,requires-body=true,tag=DriveMBY Adult Filter
 
 [MITM]
 hostname = api.themoviedb.org, image.tmdb.org, tmdb-proxy.me-zhuxy.workers.dev, forwardinfo.vvebo.vip, www.t66y.com, drivemby.inch.red
