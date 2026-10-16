@@ -3,7 +3,7 @@
  * cfproxy = false → 直连 TMDB：API 补 include_adult=true 后 302 回自身
  * 注意：用「返回 302 响应」而非「改 host」，避免响应脚本不触发
  */
-const WORKER = "tmdb-proxy.me-zhuxy.workers.dev";
+const WORKER = "tmdb.shayon.us.ci";
 
 let on = true;
 try {

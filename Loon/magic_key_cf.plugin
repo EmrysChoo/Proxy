@@ -1,8 +1,8 @@
 #!name = 神秘钥匙 · CF直连版
-#!desc = v2.5 · TMDB 反代开关（302 机制不变）+ 成人内容解锁；T66Y/Forward/DriveMBY 解锁
+#!desc = v2.6 · TMDB 反代切换至 tmdb.shayon.us.ci（302 机制不变）+ 成人内容解锁；T66Y/Forward/DriveMBY 解锁
 #!author = Evan
-#!version = 2.5-cf
-#!updated = 2026-10-10
+#!version = 2.6-cf
+#!updated = 2026-10-16
 #!homepage = https://github.com/EmrysChoo/Proxy
 #!icon = https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Media.png
 
@@ -26,8 +26,8 @@ http-request ^https?:\/\/api\.themoviedb\.org script-path=https://raw.githubuser
 http-request ^https?:\/\/image\.tmdb\.org script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_cf_proxy.js,requires-body=false,tag=TMDB 图片 CF反代,argument=[{cfproxy}]
 
 # —— 成人内容过滤（反代/直连两种响应域名都匹配）——
-http-response ^https?:\/\/(?:api\.themoviedb\.org|tmdb-proxy\.me-zhuxy\.workers\.dev)\/3\/(?:search|person|movie|tv) script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js,requires-body=true,tag=TMDB Adult Filter
+http-response ^https?:\/\/(?:api\.themoviedb\.org|tmdb\.shayon\.us\.ci)\/3\/(?:search|person|movie|tv) script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js,requires-body=true,tag=TMDB Adult Filter
 http-response ^https:\/\/drivemby\.inch\.red\/api\/library\/search-tmdb script-path=https://raw.githubusercontent.com/EmrysChoo/Proxy/main/Loon/scripts/tmdb_adult_filter.js,requires-body=true,tag=DriveMBY Adult Filter
 
 [MITM]
-hostname = api.themoviedb.org, image.tmdb.org, tmdb-proxy.me-zhuxy.workers.dev, forwardinfo.vvebo.vip, www.t66y.com, drivemby.inch.red
+hostname = api.themoviedb.org, image.tmdb.org, tmdb.shayon.us.ci, forwardinfo.vvebo.vip, www.t66y.com, drivemby.inch.red
